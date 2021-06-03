@@ -17,8 +17,8 @@ import java.util.Collections;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Value("${spring.datasource.initialization-mode}")
-    private String initialMode;
+    @Value("${spring.sql.init.enabled}")
+    private boolean initialMode;
 
     @Autowired
     UserRepository userRepository;
@@ -33,13 +33,13 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args)  {
 
 
-        if (initialMode.equals("always")) {
+        if (initialMode) {
 
             userRepository.save(new User(
-                    "test@gmail.com",
-                    passwordEncoder.encode("Akhmedov"),
-                    "Akhmedov",
-                    "Akhmedov",
+                    "koinot",
+                    passwordEncoder.encode("koinot"),
+                    "Qudratjon",
+                    "Komilov",
                     roleRepository.findAllByNameIn(
                             Collections.singletonList(RoleName.ROLE_SUPER_ADMIN)
                     ))

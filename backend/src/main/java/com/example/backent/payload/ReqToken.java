@@ -1,6 +1,7 @@
 package com.example.backent.payload;
 
-import uz.ssd.testapp.entity.Role;
+
+import com.example.backent.entity.Role;
 
 import java.util.List;
 

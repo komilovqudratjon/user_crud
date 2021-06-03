@@ -1,6 +1,9 @@
 package com.example.backent.config;
 
 
+import com.example.backent.security.AuthService;
+import com.example.backent.security.JwtAuthenticationEntryPoint;
+import com.example.backent.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +23,6 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import uz.ssd.testapp.security.AuthService;
-import uz.ssd.testapp.security.JwtAuthenticationEntryPoint;
-import uz.ssd.testapp.security.JwtAuthenticationFilter;
 
 
 @Configuration
