@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/backend/backent.iml" filepath="$PROJECT_DIR$/backend/backent.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/project_manage.iml" filepath="$PROJECT_DIR$/.idea/project_manage.iml" />
-      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
     </modules>
   </component>
 </project>

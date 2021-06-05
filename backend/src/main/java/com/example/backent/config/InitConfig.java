@@ -14,8 +14,8 @@ public class InitConfig {
             if (props.getProperty("spring.jpa.hibernate.ddl-auto").equals("update")){
                 return true;
             }else{
-                String confirm = JOptionPane.showInputDialog("Diqqat Etibor bering malumotlar o'chib ketishi mumkin parrol:(Akhmedov)");
-                if (confirm!=null && confirm.equals("Akhmedov")){
+                String confirm = JOptionPane.showInputDialog("Diqqat Etibor bering malumotlar o'chib ketishi mumkin parrol:(123)");
+                if (confirm!=null && confirm.equals("123")){
                     return true;
                 }
             }
