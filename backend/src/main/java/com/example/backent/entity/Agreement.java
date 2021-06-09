@@ -7,13 +7,17 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class Variable extends AbsEntity {
-    private String name;
+public class Agreement extends AbsEntity {
 
+    private String why;
+
+    @OneToOne
+    private Attachment aFile; // nima uchun kelishilgan narsaning file
 }
