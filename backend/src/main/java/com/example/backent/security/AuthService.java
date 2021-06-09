@@ -53,7 +53,7 @@ public class AuthService implements UserDetailsService {
         return null;
     }
 
-    public HttpEntity<?> getApiToken(String email, String password, String lang) {
+    public HttpEntity<?> getApiToken(String email, String password) {
         return null;
     }
 }
