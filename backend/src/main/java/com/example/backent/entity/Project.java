@@ -6,14 +6,22 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class Variable extends AbsEntity {
+public class Project extends AbsEntity {
+
     private String name;
+
+    @ManyToOne
+    private Company company;
+
+    @OneToMany
+    private List<Agreement> agreementList;
 
 }
