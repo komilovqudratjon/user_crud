@@ -7,13 +7,20 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class Variable extends AbsEntity {
-    private String name;
+public class CompleteQuestion extends AbsEntity {
+
+    @OneToOne
+    private Attachment questionPhoto;
+
+    private String text;
+
+    private String link;
 
 }
