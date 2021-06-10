@@ -1,6 +1,6 @@
 package com.example.backent.entity;
 
-import com.example.backent.entity.enums.AttachmentCause;
+import com.example.backent.entity.enums.AttachmentType;
 import com.example.backent.entity.template.AbsEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +18,9 @@ public class Attachment extends AbsEntity {
     private String name;
     private String telegramURL;
     private String path;
-    private String extension;
+    private String content;
     @Enumerated(EnumType.STRING)
-    private AttachmentCause why;
+    private AttachmentType attachmentType;
     private long size;
 
 }

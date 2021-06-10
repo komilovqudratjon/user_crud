@@ -1,6 +1,6 @@
 package com.example.backent.entity.enums;
 
-public enum AttachmentCause {
+public enum AttachmentType {
     PROFILE,
     AGREEMENT
 }

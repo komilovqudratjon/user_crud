@@ -20,5 +20,5 @@ public class Company extends AbsEntity {
     private String name;
 
     @OneToMany
-    private List<Attachment> agreement;
+    private List<Agreement> agreement;
 }

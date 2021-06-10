@@ -4,17 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReqCompany {
-
+public class ReqAgreement {
     private Long id;
-    private String name;
-    private List<Long> agreement;
-//    **** data for edit ****
-    private List<Long> deleteFile;
-
+    private String why;
+    private Long fileId;
 }
