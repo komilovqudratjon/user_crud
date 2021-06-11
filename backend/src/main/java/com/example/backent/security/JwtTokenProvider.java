@@ -31,16 +31,8 @@ public class JwtTokenProvider {
 
         Date expiryDate = new Date(new Date().getTime() + jwtExpirationInMs);
 
-//        User user=userRepository.getOne(userPrincipal.getId());
-//        ReqToken reqToken=new ReqToken();
-//        reqToken.setId(userPrincipal.getId());
-//        reqToken.setEmail(userPrincipal.getEmail());
-//        reqToken.setRole(user.getRoles());
-
         return Jwts.builder()
                 .setSubject(userPrincipal.getId().toString())
-                .setAudience(userPrincipal.getRoles().get(0).getName().toString())
-                .setIssuer(userPrincipal.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)

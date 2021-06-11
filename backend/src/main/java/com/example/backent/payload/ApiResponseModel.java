@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponseModel {
-    private Integer statusCode;
+    private Integer code;
     private String message;
     private Object data;
 
-    public ApiResponseModel(Integer statusCode, String message) {
-        this.statusCode = statusCode;
+    public ApiResponseModel(Integer code, String message) {
+        this.code = code;
         this.message = message;
     }
 }

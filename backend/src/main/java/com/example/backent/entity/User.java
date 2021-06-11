@@ -27,7 +27,6 @@ public class User extends AbsEntity implements UserDetails {
     private String middlename;
 
     @Column(unique = true)
-    @NotNull
     private String passportNumber;
 
     private Date dateOfBirth;
@@ -45,10 +44,17 @@ public class User extends AbsEntity implements UserDetails {
     @OneToOne(fetch = FetchType.LAZY)
     private Attachment avatar;
 
-
-    private int loginAttempts = 0;
-
-    private int category=1;
+    public User(String firstname, String lastname, String middlename, String passportNumber, Date dateOfBirth, String phoneNumber, String email, String password, List<Role> roles) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.middlename = middlename;
+        this.passportNumber = passportNumber;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
 
     private boolean active = true;
 

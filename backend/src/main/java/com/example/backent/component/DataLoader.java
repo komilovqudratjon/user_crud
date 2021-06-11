@@ -1,6 +1,7 @@
 package com.example.backent.component;
 
 
+import com.example.backent.entity.Role;
 import com.example.backent.entity.User;
 import com.example.backent.entity.enums.RoleName;
 import com.example.backent.repository.RoleRepository;
@@ -32,6 +33,11 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args)  {
 
+        if (roleRepository.count()==0) {
+            roleRepository.save(new Role(1, RoleName.USER));
+            roleRepository.save(new Role(2, RoleName.ADMIN));
+            roleRepository.save(new Role(3, RoleName.SUPER_ADMIN));
+        }
 
         if (initialMode) {
 
@@ -41,7 +47,7 @@ public class DataLoader implements CommandLineRunner {
                     "Qudratjon",
                     "Komilov",
                     roleRepository.findAllByNameIn(
-                            Collections.singletonList(RoleName.ROLE_SUPER_ADMIN)
+                            Collections.singletonList(RoleName.SUPER_ADMIN)
                     ))
             );
 

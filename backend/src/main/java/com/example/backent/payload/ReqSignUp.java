@@ -2,16 +2,16 @@ package com.example.backent.payload;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ReqSignUp {
-    private Long  id;
     private String firstname;
     private String lastname;
     private String middleName;
     private String phoneNumber;
-    private String dateOfBirth;
+    private Date dateOfBirth;
     private String passportNumber;
+    private String password;
     private String email;
-    private int category;
-    private String role;
 }
