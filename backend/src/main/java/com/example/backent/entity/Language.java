@@ -16,9 +16,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class Language extends AbsEntity {
 
-    @OneToOne
-    private Attachment logo;
+  @OneToOne private Attachment logo;
 
-    private String name;
-
+  private String name;
 }

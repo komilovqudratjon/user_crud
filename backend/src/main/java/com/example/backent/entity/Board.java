@@ -16,9 +16,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Board extends AbsEntity {
 
-    private String name;
+  private String name;
 
-    @ManyToOne
-    private Project project;
-
+  @ManyToOne private Project project;
 }

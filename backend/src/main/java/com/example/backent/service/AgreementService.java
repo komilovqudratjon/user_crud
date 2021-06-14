@@ -3,5 +3,4 @@ package com.example.backent.service;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AgreementService {
-}
+public class AgreementService {}

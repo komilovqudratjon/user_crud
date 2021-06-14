@@ -11,8 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ReqCompany {
 
-    private Long id;
-    private String name;
-    private List<Long> agreement;
-
+  private Long id;
+  private String name;
+  private List<Long> agreement;
 }

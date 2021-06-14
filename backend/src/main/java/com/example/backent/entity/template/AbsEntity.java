@@ -14,23 +14,20 @@ import java.sql.Timestamp;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbsEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OrderBy
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private Timestamp createdAt;
+  @OrderBy
+  @CreationTimestamp
+  @Column(nullable = false, updatable = false)
+  private Timestamp createdAt;
 
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private Timestamp updatedAt;
+  @UpdateTimestamp
+  @Column(nullable = false)
+  private Timestamp updatedAt;
 
-    @CreatedBy
-    private Long createdBy;
+  @CreatedBy private Long createdBy;
 
-    @LastModifiedBy
-    private Long updatedBy;
-
+  @LastModifiedBy private Long updatedBy;
 }

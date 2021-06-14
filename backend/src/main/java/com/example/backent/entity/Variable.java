@@ -14,6 +14,5 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Entity
 public class Variable extends AbsEntity {
-    private String name;
-
+  private String name;
 }

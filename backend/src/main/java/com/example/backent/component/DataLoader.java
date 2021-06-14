@@ -1,6 +1,5 @@
 package com.example.backent.component;
 
-
 import com.example.backent.entity.Role;
 import com.example.backent.entity.User;
 import com.example.backent.entity.enums.RoleName;
@@ -12,49 +11,38 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-
 import java.util.Collections;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Value("${spring.sql.init.enabled}")
-    private boolean initialMode;
+  @Value("${spring.sql.init.enabled}")
+  private boolean initialMode;
 
-    @Autowired
-    UserRepository userRepository;
+  @Autowired UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+  @Autowired RoleRepository roleRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+  @Autowired PasswordEncoder passwordEncoder;
 
-    @Override
-    public void run(String... args)  {
+  @Override
+  public void run(String... args) {
 
-        if (roleRepository.count()==0) {
-            roleRepository.save(new Role(1, RoleName.USER));
-            roleRepository.save(new Role(2, RoleName.ADMIN));
-            roleRepository.save(new Role(3, RoleName.SUPER_ADMIN));
-        }
-
-        if (initialMode) {
-
-            userRepository.save(new User(
-                    "koinot",
-                    passwordEncoder.encode("koinot"),
-                    "Qudratjon",
-                    "Komilov",
-                    roleRepository.findAllByNameIn(
-                            Collections.singletonList(RoleName.SUPER_ADMIN)
-                    ))
-            );
-
-
-        }
-
-
+    if (roleRepository.count() == 0) {
+      roleRepository.save(new Role(1, RoleName.USER));
+      roleRepository.save(new Role(2, RoleName.ADMIN));
+      roleRepository.save(new Role(3, RoleName.SUPER_ADMIN));
     }
 
+    if (initialMode) {
+
+      userRepository.save(
+          new User(
+              "koinot",
+              passwordEncoder.encode("koinot"),
+              "Qudratjon",
+              "Komilov",
+              roleRepository.findAllByNameIn(Collections.singletonList(RoleName.SUPER_ADMIN))));
+    }
+  }
 }

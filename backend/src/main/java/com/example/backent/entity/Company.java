@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,9 +17,7 @@ import java.util.List;
 @Entity
 public class Company extends AbsEntity {
 
+  private String name;
 
-    private String name;
-
-    @OneToMany
-    private List<Attachment> agreement;
+  @OneToMany private List<Attachment> agreement;
 }

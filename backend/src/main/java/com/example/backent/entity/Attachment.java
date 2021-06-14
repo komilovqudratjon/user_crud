@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Getter
 @Setter
@@ -15,12 +17,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class Attachment extends AbsEntity {
-    private String name;
-    private String telegramURL;
-    private String path;
-    private String extension;
-    @Enumerated(EnumType.STRING)
-    private AttachmentCause why;
-    private long size;
+  private String name;
+  private String telegramURL;
+  private String path;
+  private String extension;
 
+  @Enumerated(EnumType.STRING)
+  private AttachmentCause why;
+
+  private long size;
 }

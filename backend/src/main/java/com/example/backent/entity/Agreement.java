@@ -16,8 +16,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class Agreement extends AbsEntity {
 
-    private String why;
+  private String why;
 
-    @OneToOne
-    private Attachment aFile; // nima uchun kelishilgan narsaning file
+  @OneToOne private Attachment aFile; // nima uchun kelishilgan narsaning file
 }
