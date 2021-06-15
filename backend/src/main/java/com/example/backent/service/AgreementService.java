@@ -20,19 +20,20 @@ public class AgreementService {
     @Autowired
     AttachmentRepository attachmentRepository;
 
-//    public ApiResponseModel addAgreement(ReqAgreement reqAgreement){
-//        ApiResponseModel apiResponseModel = new ApiResponseModel();
-//        try{
-//            Agreement agreement = new Agreement();
-//            agreement.setWhy(reqAgreement.getWhy());
-//            Optional<Attachment> optionalAttachment = attachmentRepository.findById(reqAgreement.getFileId());
-//            agreement.setAFile(optionalAttachment.get());
-//            apiResponseModel.setCode(200);
-//            apiResponseModel.setMessage("success");
-//        }catch(Exception e){
-//            apiResponseModel.setCode(500);
-//            apiResponseModel.setMessage("success");
-//        }
-//    }
+    public ApiResponseModel addAgreement(ReqAgreement reqAgreement){
+        ApiResponseModel apiResponseModel = new ApiResponseModel();
+        try{
+            Agreement agreement = new Agreement();
+            agreement.setWhy(reqAgreement.getWhy());
+            Optional<Attachment> optionalAttachment = attachmentRepository.findById(reqAgreement.getFileId());
+            agreement.setAFile(optionalAttachment.get());
+            apiResponseModel.setCode(200);
+            apiResponseModel.setMessage("success");
+        }catch(Exception e){
+            apiResponseModel.setCode(500);
+            apiResponseModel.setMessage("success");
+        }
+        return apiResponseModel;
+    }
 
 }
