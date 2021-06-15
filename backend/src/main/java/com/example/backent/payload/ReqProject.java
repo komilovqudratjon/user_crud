@@ -11,11 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ReqProject {
 
-    private Long id;
-    private String name;
-    // TODO PROJECTNI TYPE BULISHI KERAK
-    private Long companyId;
-    private List<Long> agreements;
-
-
+  private Long id;
+  private String name;
+  private Long companyId;
+  private List<Long> agreements;
 }

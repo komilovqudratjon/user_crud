@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,88 +21,107 @@ import java.util.List;
 @AllArgsConstructor
 public class User extends AbsEntity implements UserDetails {
 
-    private String firstname;
-    private String lastname;
-    private String middlename;
+  private String firstname;
+  private String lastname;
+  private String middlename;
 
-    @Column(unique = true)
-    @NotNull
-    private String passportNumber;
+  @Column(unique = true)
+  private String passportNumber;
 
-    private Date dateOfBirth;
+  private Date dateOfBirth;
 
-    @Column(unique = true)
-    private String phoneNumber;
+  @Column(unique = true)
+  private String phoneNumber;
 
-    @Column(unique = true)
-    @NotNull
-    private String email;
+  @Column(unique = true)
+  @NotNull
+  private String email;
 
-    @NotNull
-    private String password;
+  @NotNull private String password;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private Attachment avatar;
+  @OneToOne(fetch = FetchType.LAZY)
+  private Attachment avatar;
 
+  public User(
+      String firstname,
+      String lastname,
+      String middlename,
+      String passportNumber,
+      Date dateOfBirth,
+      String phoneNumber,
+      String email,
+      String password,
+      List<Role> roles) {
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.middlename = middlename;
+    this.passportNumber = passportNumber;
+    this.dateOfBirth = dateOfBirth;
+    this.phoneNumber = phoneNumber;
+    this.email = email;
+    this.password = password;
+    this.roles = roles;
+  }
 
-    private int loginAttempts = 0;
+  private boolean active = true;
 
-    private int category=1;
+  private boolean deleted = false;
 
-    private boolean active = true;
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "user_role",
+      joinColumns = {@JoinColumn(name = "user_id")},
+      inverseJoinColumns = {@JoinColumn(name = "role_id")})
+  private List<Role> roles;
 
-    private boolean deleted = false;
+  private boolean accountNonExpired = true;
+  private boolean accountNonLocked = true;
+  private boolean credentialsNonExpired = true;
+  private boolean enabled = true;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private List<Role> roles;
+  public User(
+      String s,
+      String s1,
+      String encode,
+      String firstname,
+      String lastname,
+      List<Role> allByNameIn) {}
 
-    private boolean accountNonExpired = true;
-    private boolean accountNonLocked = true;
-    private boolean credentialsNonExpired = true;
-    private boolean enabled = true;
+  public User(String email, String password, String firstname, String lastname, List<Role> roles) {
+    this.email = email;
+    this.password = password;
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.roles = roles;
+  }
 
-    public User(String s, String s1, String encode, String firstname, String lastname, List<Role> allByNameIn) {
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return this.roles;
+  }
 
+  @Override
+  public String getUsername() {
+    return this.email;
+  }
 
-    public User(String email, String password, String firstname, String lastname, List<Role> roles) {
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.roles = roles;
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return this.accountNonExpired;
+  }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return this.accountNonLocked;
+  }
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return this.credentialsNonExpired;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return this.accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return this.accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return this.credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
+  @Override
+  public boolean isEnabled() {
+    return this.enabled;
+  }
 }

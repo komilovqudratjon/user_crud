@@ -16,11 +16,9 @@ import javax.persistence.OneToOne;
 @Entity
 public class CompleteQuestion extends AbsEntity {
 
-    @OneToOne
-    private Attachment questionPhoto;
+  @OneToOne private Attachment questionPhoto;
 
-    private String text;
+  private String text;
 
-    private String link;
-
+  private String link;
 }

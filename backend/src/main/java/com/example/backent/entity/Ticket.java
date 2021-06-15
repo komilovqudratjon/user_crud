@@ -17,33 +17,27 @@ import javax.persistence.*;
 @Entity
 public class Ticket extends AbsEntity {
 
-    @Enumerated(EnumType.STRING)
-    private WorkType workType;
+  @Enumerated(EnumType.STRING)
+  private WorkType workType;
 
-    private String text;
+  private String text;
 
-    @OneToOne
-    private User worker;
+  @OneToOne private User worker;
 
-    @OneToOne
-    private User pm;
+  @OneToOne private User pm;
 
-    @OneToOne
-    private User tester;
+  @OneToOne private User tester;
 
-    private Long hoursWorker;
+  private Long hoursWorker;
 
-    private Long hoursTester;
+  private Long hoursTester;
 
-    @ManyToOne
-    private Board board;
+  @ManyToOne private Board board;
 
-    @ManyToOne
-    private Language language;
+  @ManyToOne private Language language;
 
-    @OneToOne
-    private CompleteQuestion completeQuestion;
+  @OneToOne private CompleteQuestion completeQuestion;
 
-    @Enumerated(EnumType.STRING)
-    private Priority priority;
+  @Enumerated(EnumType.STRING)
+  private Priority priority;
 }

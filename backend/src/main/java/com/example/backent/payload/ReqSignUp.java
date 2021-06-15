@@ -1,17 +1,21 @@
 package com.example.backent.payload;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReqSignUp {
-    private Long  id;
-    private String firstname;
-    private String lastname;
-    private String middleName;
-    private String phoneNumber;
-    private String dateOfBirth;
-    private String passportNumber;
-    private String email;
-    private int category;
-    private String role;
+  private String firstname;
+  private String lastname;
+  private String middleName;
+  private String phoneNumber;
+  private Date dateOfBirth;
+  private String passportNumber;
+  private String password;
+  private String email;
 }
