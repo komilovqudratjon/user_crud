@@ -11,7 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 public class ReqCompany {
 
-  private Long id;
-  private String name;
-  private List<Long> agreement;
+    private Long id;
+    private String name;
+    private List<Long> agreement;
+//    **** data for edit ****
+    private List<Long> deleteFile;
+
 }
