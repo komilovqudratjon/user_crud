@@ -46,6 +46,7 @@ public class MailService {
       helper.setText(html, true);
       helper.setSubject(subject);
       helper.setFrom(from);
+      sender.send(message);
       System.out.println("Email ushbu pochtaga jo'natildi: ");
     } catch (MessagingException | IOException | TemplateException e) {
       System.out.println("Email yuborishda xatolik bo'ldi : ");

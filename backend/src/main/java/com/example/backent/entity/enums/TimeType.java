@@ -1,5 +1,6 @@
 package com.example.backent.entity.enums;
 
-public enum Priority {
-  Muhammadqodir
+public enum TimeType {
+  MONTH,
+  YEAR
 }

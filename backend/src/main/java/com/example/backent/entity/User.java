@@ -24,6 +24,7 @@ public class User extends AbsEntity implements UserDetails {
   private String firstname;
   private String lastname;
   private String middlename;
+  private String address;
 
   @Column(unique = true)
   private String passportNumber;
@@ -37,6 +38,14 @@ public class User extends AbsEntity implements UserDetails {
   @NotNull
   private String email;
 
+  @ManyToMany private List<FieldsForUsers> fields;
+
+  @ManyToMany private List<UserExperience> experiences;
+
+  @ManyToMany private List<UsersLanguage> languages;
+
+  @ManyToMany private List<ProgramingLanguage> programingLanguages;
+
   @NotNull private String password;
 
   @OneToOne(fetch = FetchType.LAZY)
@@ -46,19 +55,29 @@ public class User extends AbsEntity implements UserDetails {
       String firstname,
       String lastname,
       String middlename,
+      String address,
       String passportNumber,
       Date dateOfBirth,
       String phoneNumber,
       String email,
+      List<FieldsForUsers> fields,
+      List<UserExperience> experiences,
+      List<UsersLanguage> languages,
+      List<ProgramingLanguage> programingLanguages,
       String password,
       List<Role> roles) {
     this.firstname = firstname;
     this.lastname = lastname;
     this.middlename = middlename;
+    this.address = address;
     this.passportNumber = passportNumber;
     this.dateOfBirth = dateOfBirth;
     this.phoneNumber = phoneNumber;
     this.email = email;
+    this.fields = fields;
+    this.experiences = experiences;
+    this.languages = languages;
+    this.programingLanguages = programingLanguages;
     this.password = password;
     this.roles = roles;
   }
@@ -78,14 +97,6 @@ public class User extends AbsEntity implements UserDetails {
   private boolean accountNonLocked = true;
   private boolean credentialsNonExpired = true;
   private boolean enabled = true;
-
-  public User(
-      String s,
-      String s1,
-      String encode,
-      String firstname,
-      String lastname,
-      List<Role> allByNameIn) {}
 
   public User(String email, String password, String firstname, String lastname, List<Role> roles) {
     this.email = email;
