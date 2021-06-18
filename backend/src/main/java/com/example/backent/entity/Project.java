@@ -23,4 +23,8 @@ public class Project extends AbsEntity {
   @ManyToOne private Company company;
 
   @OneToMany private List<Agreement> agreementList;
+
+  @ManyToOne private ProjectType type;
+
+  private Boolean deleted;
 }

@@ -40,4 +40,6 @@ public class Ticket extends AbsEntity {
 
   @Enumerated(EnumType.STRING)
   private Priority priority;
+
+  private Boolean deleted;
 }

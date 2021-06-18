@@ -19,4 +19,6 @@ public class Board extends AbsEntity {
   private String name;
 
   @ManyToOne private Project project;
+
+  private Boolean deleted;
 }

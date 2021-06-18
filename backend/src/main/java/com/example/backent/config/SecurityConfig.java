@@ -107,7 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/csrf",
             "/webjars/**")
         .permitAll()
-        .antMatchers("/api/auth/login", "/api/auth/register")
+        .antMatchers("/api/auth/login", "/api/auth/register","/api/company/**","/api/project/**","/api/agreement/**","/api/project/type/**")
         .permitAll()
         .antMatchers("/api/**")
         .authenticated();

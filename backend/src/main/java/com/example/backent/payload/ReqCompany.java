@@ -13,8 +13,11 @@ public class ReqCompany {
 
     private Long id;
     private String name;
-    private List<Long> agreement;
 //    **** data for edit ****
     private List<Long> deleteFile;
 
+    public ReqCompany(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
