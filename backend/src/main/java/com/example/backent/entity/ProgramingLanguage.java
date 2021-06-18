@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Language extends AbsEntity {
+public class ProgramingLanguage extends AbsEntity {
 
   @OneToOne
   private Attachment logo;

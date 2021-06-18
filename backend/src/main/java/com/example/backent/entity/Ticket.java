@@ -34,7 +34,7 @@ public class Ticket extends AbsEntity {
 
   @ManyToOne private Board board;
 
-  @ManyToOne private Language language;
+  @ManyToOne private ProgramingLanguage programingLanguage;
 
   @OneToOne private CompleteQuestion completeQuestion;
 

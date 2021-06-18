@@ -1,5 +1,7 @@
 package com.example.backent.entity;
 
+import com.example.backent.entity.enums.Family;
+import com.example.backent.entity.enums.WorkTimeType;
 import com.example.backent.entity.template.AbsEntity;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,13 +24,25 @@ import java.util.List;
 public class User extends AbsEntity implements UserDetails {
 
   private String firstname;
+
   private String lastname;
+
   private String middlename;
+
+  private String address;
+
+  @Enumerated(EnumType.STRING)
+  private WorkTimeType workTimeType;
+
+  @Enumerated(EnumType.STRING)
+  private Family family;
 
   @Column(unique = true)
   private String passportNumber;
 
   private Date dateOfBirth;
+
+  private Date startWorkingTime;
 
   @Column(unique = true)
   private String phoneNumber;
@@ -36,6 +50,14 @@ public class User extends AbsEntity implements UserDetails {
   @Column(unique = true)
   @NotNull
   private String email;
+
+  @ManyToMany private List<FieldsForUsers> fields;
+
+  @ManyToMany private List<UserExperience> experiences;
+
+  @ManyToMany private List<UsersLanguage> languages;
+
+  @ManyToMany private List<ProgramingLanguage> programingLanguages;
 
   @NotNull private String password;
 
@@ -46,21 +68,41 @@ public class User extends AbsEntity implements UserDetails {
       String firstname,
       String lastname,
       String middlename,
+      String address,
+      WorkTimeType workTimeType,
+      Family family,
       String passportNumber,
       Date dateOfBirth,
+      Date startWorkingTime,
       String phoneNumber,
       String email,
+      List<FieldsForUsers> fields,
+      List<UserExperience> experiences,
+      List<UsersLanguage> languages,
+      List<ProgramingLanguage> programingLanguages,
       String password,
-      List<Role> roles) {
+      boolean active,
+      List<Role> roles,
+      Attachment avatar) {
     this.firstname = firstname;
     this.lastname = lastname;
     this.middlename = middlename;
+    this.address = address;
+    this.workTimeType = workTimeType;
+    this.family = family;
     this.passportNumber = passportNumber;
     this.dateOfBirth = dateOfBirth;
+    this.startWorkingTime = startWorkingTime;
     this.phoneNumber = phoneNumber;
     this.email = email;
+    this.fields = fields;
+    this.experiences = experiences;
+    this.languages = languages;
+    this.programingLanguages = programingLanguages;
     this.password = password;
+    this.active = active;
     this.roles = roles;
+    this.avatar = avatar;
   }
 
   private boolean active = true;
@@ -78,14 +120,6 @@ public class User extends AbsEntity implements UserDetails {
   private boolean accountNonLocked = true;
   private boolean credentialsNonExpired = true;
   private boolean enabled = true;
-
-  public User(
-      String s,
-      String s1,
-      String encode,
-      String firstname,
-      String lastname,
-      List<Role> allByNameIn) {}
 
   public User(String email, String password, String firstname, String lastname, List<Role> roles) {
     this.email = email;
