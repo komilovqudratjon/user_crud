@@ -20,12 +20,25 @@ public class CompanyService {
     @Autowired
     AgreementRepository agreementRepository;
 
-    public ApiResponseModel addCompany(ReqCompany reqCompany){
+    public ApiResponseModel addOrEditCompany(ReqCompany reqCompany){
         ApiResponseModel apiResponseModel = new ApiResponseModel();
+        Company company = new Company();
         try {
-            Company company = new Company();
-            company.setName(reqCompany.getName());
-            company.setId(reqCompany.getId());
+            if(reqCompany.getId()!=null){
+                Optional<Company> optionalCompany = companyRepository.findById(reqCompany.getId());
+                if(optionalCompany.isPresent()){
+                    company = optionalCompany.get();
+                }
+            }
+
+            if(!companyRepository.existsByName(reqCompany.getName())){
+                company.setName(reqCompany.getName());
+            }else {
+                apiResponseModel.setCode(207);
+                apiResponseModel.setMessage("bunaqa nomli comoany mavjud !");
+                return apiResponseModel;
+            }
+            companyRepository.save(company);
             apiResponseModel.setCode(200);
             apiResponseModel.setMessage("success");
         }catch(Exception e){
@@ -35,30 +48,67 @@ public class CompanyService {
         return apiResponseModel;
     }
 
-//    public ApiResponseModel addAgreement(ReqCompany reqCompany){
-//        ApiResponseModel apiResponseModel = new ApiResponseModel();
-//        Company company = null;
-//        List<Agreement> list = null;
-//        try{
-//            Optional<Company> optionalCompany = companyRepository.findById(reqCompany.getId());
-//            if (optionalCompany.isPresent()){
-//                company = optionalCompany.get();
-//                try{
-//                    list = agreementRepository.findAllById(reqCompany.getAgreement());
-//                    company.setAgreement(list);
-//                }catch(Exception e){
-//                    apiResponseModel.setCode(207);
-//                    apiResponseModel.setMessage("agreement id did not found");
-//                }
-//            }else {
-//                apiResponseModel.setCode(206);
-//                apiResponseModel.setMessage("company did not found");
-//            }
-//        }catch(Exception e){
-//            apiResponseModel.setCode(500);
-//            apiResponseModel.setMessage("error");
-//        }
-//        return apiResponseModel;
-//    }
+    public ApiResponseModel deleteCompany(Long companyId){
+        ApiResponseModel response = new ApiResponseModel();
+        Company company = null;
+        try{
+            Optional<Company> optionalCompany = Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
+            if(optionalCompany.isPresent()){
+                company = optionalCompany.get();
+                company.setDeleted(true);
+                companyRepository.save(company);
+            }else{
+                response.setCode(207);
+                response.setMessage("company did not found");
+            }
+            response.setMessage("deleted");
+            response.setCode(200);
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("siz companiyani uchira olmaysiz");
+        }
+        return response;
+    }
+
+    public ApiResponseModel getAllCompany(){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            List<Company> companyList = companyRepository.findAllByDeleted(false);
+            response.setCode(200);
+            response.setMessage("success");
+            response.setData(companyList);
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("error");
+        }
+        return response;
+    }
+
+    public ApiResponseModel getOneCompany(Long companyId){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            Optional<Company> optionalCompany = Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
+            if(optionalCompany.isPresent()){
+                response.setData(optionalCompany);
+                response.setCode(200);
+                response.setMessage("success");
+            }else {
+                response.setCode(207);
+                response.setMessage("bunaqa idlik campaniya mavjud emas");
+            }
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("error");
+        }
+        return response;
+    }
+
+    public ReqCompany getOneCompany(Company company){
+        return new ReqCompany(
+                company.getId(),
+                company.getName()
+        );
+    }
+
 
 }

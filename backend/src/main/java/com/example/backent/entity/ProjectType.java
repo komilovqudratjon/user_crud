@@ -7,19 +7,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
-public class ProgramingLanguage extends AbsEntity {
-
-  @OneToOne
-  private Attachment logo;
-
-  private String name;
-
-  private Boolean deleted;
+public class ProjectType extends AbsEntity {
+    private String name;
+    private boolean deleted;
 }
