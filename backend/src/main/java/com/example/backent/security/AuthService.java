@@ -1,10 +1,11 @@
 package com.example.backent.security;
 
+import com.example.backent.entity.Attachment;
 import com.example.backent.entity.User;
-import com.example.backent.entity.enums.RoleName;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.JwtResponse;
 import com.example.backent.payload.ReqSignUp;
+import com.example.backent.payload.ResUploadFile;
 import com.example.backent.repository.*;
 import com.example.backent.service.MailService;
 import freemarker.template.Configuration;
@@ -23,7 +24,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -52,6 +59,8 @@ public class AuthService implements UserDetailsService {
 
   private final ProgrammingLanguageRepository programmingLanguageRepository;
 
+  private final AttachmentRepository attachmentRepository;
+
   private final MailService mailService;
 
   private final Configuration config;
@@ -64,6 +73,7 @@ public class AuthService implements UserDetailsService {
       JwtTokenProvider jwtTokenProvider,
       AuthenticationManager authenticate,
       UserLanguageRepository usersLanguageRepository,
+      AttachmentRepository attachmentRepository,
       MailService mailService,
       JavaMailSender sender,
       UserFieldsRepository userFieldsRepository,
@@ -76,6 +86,7 @@ public class AuthService implements UserDetailsService {
     this.jwtTokenProvider = jwtTokenProvider;
     this.authenticate = authenticate;
     this.usersLanguageRepository = usersLanguageRepository;
+    this.attachmentRepository = attachmentRepository;
     this.mailService = mailService;
     this.userFieldsRepository = userFieldsRepository;
     this.userExperiencesRepository = userExperiencesRepository;
@@ -102,14 +113,18 @@ public class AuthService implements UserDetailsService {
     if (userRepository.existsByEmail(reqSignUp.getEmail())) {
       return new ApiResponseModel(HttpStatus.CONFLICT.value(), "this email is busy");
     }
+
     userRepository.save(
         new User(
             reqSignUp.getFirstname(),
             reqSignUp.getLastname(),
             reqSignUp.getMiddleName(),
             reqSignUp.getAddress(),
+            reqSignUp.getWorkTimeType(),
+            reqSignUp.getFamily(),
             reqSignUp.getPassportNumber(),
             reqSignUp.getDateOfBirth(),
+            reqSignUp.getStartWorkingTime(),
             reqSignUp.getPhoneNumber(),
             reqSignUp.getEmail(),
             userFieldsRepository.findAllByIdIn(reqSignUp.getFields()),
@@ -117,7 +132,9 @@ public class AuthService implements UserDetailsService {
             usersLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
             programmingLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
             passwordEncoder.encode(reqSignUp.getPassword()),
-            roleRepository.findAllByNameIn(List.of(reqSignUp.getRoles()))));
+            reqSignUp.isActive(),
+            roleRepository.findAllByNameIn(List.of(reqSignUp.getRoles())),
+            getPhoto(reqSignUp.getPhotoId())));
     mailService.sendEmail(
         reqSignUp.getFirstname() + " " + reqSignUp.getLastname(),
         reqSignUp.getEmail(),
@@ -127,6 +144,14 @@ public class AuthService implements UserDetailsService {
         "this is link put",
         reqSignUp.getPassword());
     return new ApiResponseModel(HttpStatus.OK.value(), "saved", reqSignUp.getEmail());
+  }
+
+  public Attachment getPhoto(Long id) {
+    try {
+      return attachmentRepository.getById(id);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public HttpEntity<?> getApiToken(String phoneNumber, String password) {

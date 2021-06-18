@@ -1,5 +1,7 @@
 package com.example.backent.entity;
 
+import com.example.backent.entity.enums.Family;
+import com.example.backent.entity.enums.WorkTimeType;
 import com.example.backent.entity.template.AbsEntity;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,14 +24,25 @@ import java.util.List;
 public class User extends AbsEntity implements UserDetails {
 
   private String firstname;
+
   private String lastname;
+
   private String middlename;
+
   private String address;
+
+  @Enumerated(EnumType.STRING)
+  private WorkTimeType workTimeType;
+
+  @Enumerated(EnumType.STRING)
+  private Family family;
 
   @Column(unique = true)
   private String passportNumber;
 
   private Date dateOfBirth;
+
+  private Date startWorkingTime;
 
   @Column(unique = true)
   private String phoneNumber;
@@ -56,8 +69,11 @@ public class User extends AbsEntity implements UserDetails {
       String lastname,
       String middlename,
       String address,
+      WorkTimeType workTimeType,
+      Family family,
       String passportNumber,
       Date dateOfBirth,
+      Date startWorkingTime,
       String phoneNumber,
       String email,
       List<FieldsForUsers> fields,
@@ -65,13 +81,18 @@ public class User extends AbsEntity implements UserDetails {
       List<UsersLanguage> languages,
       List<ProgramingLanguage> programingLanguages,
       String password,
-      List<Role> roles) {
+      boolean active,
+      List<Role> roles,
+      Attachment avatar) {
     this.firstname = firstname;
     this.lastname = lastname;
     this.middlename = middlename;
     this.address = address;
+    this.workTimeType = workTimeType;
+    this.family = family;
     this.passportNumber = passportNumber;
     this.dateOfBirth = dateOfBirth;
+    this.startWorkingTime = startWorkingTime;
     this.phoneNumber = phoneNumber;
     this.email = email;
     this.fields = fields;
@@ -79,7 +100,9 @@ public class User extends AbsEntity implements UserDetails {
     this.languages = languages;
     this.programingLanguages = programingLanguages;
     this.password = password;
+    this.active = active;
     this.roles = roles;
+    this.avatar = avatar;
   }
 
   private boolean active = true;
