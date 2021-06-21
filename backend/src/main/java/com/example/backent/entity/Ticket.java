@@ -37,5 +37,5 @@ public class Ticket extends AbsEntity {
 
   @OneToOne private CompleteQuestion completeQuestion;
 
-  private Boolean deleted;
+  private boolean deleted;
 }

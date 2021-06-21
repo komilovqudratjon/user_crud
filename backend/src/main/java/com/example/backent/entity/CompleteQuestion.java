@@ -21,6 +21,5 @@ public class CompleteQuestion extends AbsEntity {
   private String text;
 
   private String link;
-
-  private Boolean deleted;
+  private boolean deleted;
 }

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface LanguageRepository extends JpaRepository<ProgramingLanguage, Long> {
-  List<ProgramingLanguage> findAllByDeleted(Boolean deleted);
+    List<ProgramingLanguage> findAllByDeleted(Boolean deleted);
 }

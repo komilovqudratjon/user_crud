@@ -26,5 +26,5 @@ public class Project extends AbsEntity {
 
   @ManyToOne private ProjectType type;
 
-  private Boolean deleted;
+  private boolean deleted;
 }

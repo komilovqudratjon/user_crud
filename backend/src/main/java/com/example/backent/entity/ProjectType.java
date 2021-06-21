@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-
 @Entity
 public class ProjectType extends AbsEntity {
     private String name;
