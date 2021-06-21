@@ -22,8 +22,7 @@ public class MailService {
 
   @Autowired private Configuration config;
 
-  public void sendEmail(
-      String name, String to, String from, String subject, String user, String ip, String pass) {
+  public void sendEmail(String name, String to, String from, String subject, String user, String ip, String pass) {
     try {
 
       MimeMessage message = sender.createMimeMessage();

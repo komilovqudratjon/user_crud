@@ -31,6 +31,14 @@ public class BoardService {
         try{
             Board board = new Board();
             board.setName(reqBoard.getName());
+            Optional<Project> project = projectRepository.findById(reqBoard.getProject());
+            if(project.isPresent()){
+                board.setProject(project.get());
+            }else{
+                response.setMessage("bunaqa idlik project mavjud emas !");
+                response.setCode(207);
+            }
+            boardRepository.save(board);
             response.setMessage("success !");
             response.setCode(200);
         }catch(Exception e){
@@ -66,7 +74,14 @@ public class BoardService {
     public ApiResponseModel deleteBoard(Long id){
         ApiResponseModel response = new ApiResponseModel();
         try{
-            boardRepository.deleteById(id);
+            Optional<Board> board = boardRepository.findById(id);
+            if(board.isPresent()){
+                board.get().setDeleted(true);
+                boardRepository.save(board.get());
+            }else{
+                response.setMessage("bunaqa idlik board mavjud emas !");
+                response.setCode(207);
+            }
             response.setMessage("success !");
             response.setCode(200);
         }catch(Exception e){

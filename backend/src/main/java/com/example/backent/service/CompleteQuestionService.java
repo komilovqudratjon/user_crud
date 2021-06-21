@@ -40,6 +40,7 @@ public class CompleteQuestionService {
             }
             fullQuestion.setText(reqFullQuestion.getText());
             fullQuestion.setLink(reqFullQuestion.getLink());
+            full.save(fullQuestion);
             response.setCode(200);
             response.setMessage("success !");
         }catch(Exception e){
@@ -54,12 +55,14 @@ public class CompleteQuestionService {
         try{
             Optional<CompleteQuestion> optionalCompleteQuestion = full.findById(id);
             if(optionalCompleteQuestion.isPresent()){
-                optionalCompleteQuestion.get().setDeleted(false);
+                optionalCompleteQuestion.get().setDeleted(true);
                 full.save(optionalCompleteQuestion.get());
             }else{
                 response.setMessage("bunaqa idlik savol mavjud emas");
                 response.setCode(207);
             }
+            response.setCode(200);
+            response.setMessage("success !");
         }catch(Exception e){
             response.setCode(500);
             response.setMessage("error");

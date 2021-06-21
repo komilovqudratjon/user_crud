@@ -16,7 +16,7 @@ public class CompleteQuestionController {
     CompleteQuestionService service;
 
     @PostMapping
-    public HttpEntity<?> addFullQuestion(ReqFullQuestion reqFullQuestion){
+    public HttpEntity<?> addFullQuestion(@RequestBody ReqFullQuestion reqFullQuestion){
         ApiResponseModel response = service.addOrEditFullQuestion(reqFullQuestion);
         return ResponseEntity.ok(response);
     }

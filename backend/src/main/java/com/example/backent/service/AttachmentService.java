@@ -1,6 +1,7 @@
 package com.example.backent.service;
 
 import com.example.backent.entity.Attachment;
+import com.example.backent.entity.enums.AttachmentType;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,13 @@ import java.util.*;
 @Service
 public class AttachmentService {
 
-    @Value("${path}")
-    private String upload;
-
     @Autowired
     AttachmentRepository attachmentRepository;
 
     public ApiResponseModel uploadFile(MultipartHttpServletRequest request){
         ApiResponseModel response = new ApiResponseModel();
         Iterator<String> iterator = request.getFileNames();
+        System.out.println(iterator);
         MultipartFile file1;
         while(iterator.hasNext()){
             file1 = request.getFile(iterator.next());
@@ -43,11 +42,15 @@ public class AttachmentService {
                 attachment.setContent(file1.getContentType());
                 attachment.setSize(file1.getSize());
                 attachment.setPath(file.getPath());
+                attachment.setAttachmentType(AttachmentType.valueOf(request.getParameter("type")));
                 attachmentRepository.save(attachment);
+                response.setMessage("SUCCESS !");
+                response.setCode(200);
             }catch(Exception e){
                 response.setMessage("error !");
                 response.setCode(500);
             }
+            return response;
         }
 
         return response;

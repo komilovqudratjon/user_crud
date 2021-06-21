@@ -1,7 +1,7 @@
 package com.example.backent.service;
 
 import com.example.backent.entity.Attachment;
-import com.example.backent.entity.Language;
+import com.example.backent.entity.ProgramingLanguage;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqLanguage;
 import com.example.backent.payload.ResLanguage;
@@ -25,10 +25,10 @@ public class LanguageService {
 
     public ApiResponseModel addOrEditLanguage(ReqLanguage reqLanguage){
         ApiResponseModel response = new ApiResponseModel();
-        Language language = new Language();
+        ProgramingLanguage language = new ProgramingLanguage();
         try{
             if(reqLanguage.getId()!=null){
-                Optional<Language> optionalLanguage = languageRepository.findById(reqLanguage.getId());
+                Optional<ProgramingLanguage> optionalLanguage = languageRepository.findById(reqLanguage.getId());
                 if(optionalLanguage.isPresent()){
                     language = optionalLanguage.get();
                 }
@@ -51,7 +51,7 @@ public class LanguageService {
     public ApiResponseModel deleteLanguage(Long id) {
         ApiResponseModel response = new ApiResponseModel();
         try{
-            Optional<Language> optionalLanguage = languageRepository.findById(id);
+            Optional<ProgramingLanguage> optionalLanguage = languageRepository.findById(id);
             if(optionalLanguage.isPresent()){
                 optionalLanguage.get().setDeleted(false);
                 languageRepository.save(optionalLanguage.get());
@@ -80,7 +80,27 @@ public class LanguageService {
         return response;
     }
 
-    public ResLanguage getLanguage(Language language){
+    public ApiResponseModel getOneLanguage(Long id){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            Optional<ProgramingLanguage> language = languageRepository.findById(id);
+            if (language.isPresent()){
+                ResLanguage resLanguage = getLanguage(language.get());
+                response.setMessage("success !");
+                response.setCode(200);
+                response.setData(resLanguage);
+            }else {
+                response.setMessage("error !");
+                response.setCode(500);
+            }
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("error");
+        }
+        return response;
+    }
+
+    public ResLanguage getLanguage(ProgramingLanguage language){
         return new ResLanguage(
                 language.getId(),
                 ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(language.getLogo().getId().toString()).toUriString(),

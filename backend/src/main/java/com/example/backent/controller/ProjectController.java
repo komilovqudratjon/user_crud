@@ -33,5 +33,11 @@ public class ProjectController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    public HttpEntity<?> deleteAll(@PathVariable Long id){
+        ApiResponseModel response = projectService.delete(id);
+        return ResponseEntity.ok(response);
+    }
+
 
 }

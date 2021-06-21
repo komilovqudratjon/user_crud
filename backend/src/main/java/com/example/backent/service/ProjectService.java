@@ -34,7 +34,6 @@ public class ProjectService {
 
     public ApiResponseModel addOrEditProject(ReqProject reqProject) {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
-        Company company = null;
         Project project = new Project();
         try {
             if (reqProject.getId() != null) {
@@ -63,10 +62,13 @@ public class ProjectService {
                     project.setAgreementList(allById);
                 }
                 project.setName(reqProject.getName());
+                projectRepository.save(project);
             } else {
                 apiResponseModel.setCode(205);
                 apiResponseModel.setMessage("bunaqa idlik companiya mavjud emas");
             }
+            apiResponseModel.setCode(200);
+            apiResponseModel.setMessage("success !");
         } catch (Exception e) {
             apiResponseModel.setCode(500);
             apiResponseModel.setMessage("error");
@@ -93,6 +95,7 @@ public class ProjectService {
                     Optional<Company> optionalCompany = companyRepository.findById(reqProject.getCompanyId());
                     optionalProject.get().setCompany(optionalCompany.get());
                 }
+                projectRepository.save(optionalProject.get());
             } else {
                 apiResponseModel.setCode(207);
                 apiResponseModel.setMessage("project id did not found");
@@ -109,13 +112,33 @@ public class ProjectService {
     public ApiResponseModel getAllProjects(){
         ApiResponseModel response = new ApiResponseModel();
         try{
-            List<ResProject> projectList = projectRepository.findAll().stream().map(this::getProject).collect(Collectors.toList());
+            List<ResProject> projectList = projectRepository.findAllByDeleted(false).stream().map(this::getProject).collect(Collectors.toList());
             response.setCode(200);
             response.setMessage("success !");
             response.setData(projectList);
         }catch(Exception e){
             response.setCode(200);
             response.setMessage("error");
+        }
+        return response;
+    }
+
+    public ApiResponseModel delete(Long id){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            Optional<Project> project = projectRepository.findById(id);
+            if(project.isPresent()){
+                project.get().setDeleted(true);
+                projectRepository.save(project.get());
+            }else{
+                response.setCode(207);
+                response.setMessage("bunaqa idlik project mavjud emas !" );
+            }
+            response.setMessage("success !");
+            response.setCode(200);
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("error !");
         }
         return response;
     }

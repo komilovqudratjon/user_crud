@@ -27,9 +27,16 @@ public class LanguageController {
         ApiResponseModel response = languageService.deleteLanguage(id);
         return ResponseEntity.ok(response);
     }
-    @GetMapping
+
+    @GetMapping("/all")
     public HttpEntity<?> getAll(){
         ApiResponseModel response = languageService.getAllLanguages();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/one/{id}")
+    public HttpEntity<?> getOne(@PathVariable Long id){
+        ApiResponseModel response = languageService.getOneLanguage(id);
         return ResponseEntity.ok(response);
     }
 }

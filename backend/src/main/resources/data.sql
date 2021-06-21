@@ -1,0 +1,1 @@
+insert into project_type (id,name,created_at,updated_at,deleted) values(1 , 'internet' , now():timestamp , 1 , false );

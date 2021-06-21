@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/attach")
+@RequestMapping("/api/attach")
 public class AttachmentController {
 
     @Autowired
@@ -21,7 +21,7 @@ public class AttachmentController {
     @PostMapping
     public HttpEntity<?> uploadFile(MultipartHttpServletRequest request){
         ApiResponseModel apiResponseModel = attachmentService.uploadFile(request);
-        return ResponseEntity.status(200).body("cjbhwhhckwhkjchkjw");
+        return ResponseEntity.status(200).body(apiResponseModel);
     }
 
     @GetMapping("/{id}")

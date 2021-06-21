@@ -27,6 +27,7 @@ public class AgreementService {
             agreement.setWhy(reqAgreement.getWhy());
             Optional<Attachment> optionalAttachment = attachmentRepository.findById(reqAgreement.getFileId());
             agreement.setAFile(optionalAttachment.get());
+            agreementRepository.save(agreement);
             apiResponseModel.setCode(200);
             apiResponseModel.setMessage("success");
         }catch(Exception e){
@@ -35,7 +36,5 @@ public class AgreementService {
         }
         return apiResponseModel;
     }
-
-
 
 }
