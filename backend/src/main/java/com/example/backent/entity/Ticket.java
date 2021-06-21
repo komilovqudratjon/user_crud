@@ -1,6 +1,5 @@
 package com.example.backent.entity;
 
-import com.example.backent.entity.enums.Priority;
 import com.example.backent.entity.enums.WorkType;
 import com.example.backent.entity.template.AbsEntity;
 import lombok.AllArgsConstructor;
@@ -37,9 +36,6 @@ public class Ticket extends AbsEntity {
   @ManyToOne private ProgramingLanguage programingLanguage;
 
   @OneToOne private CompleteQuestion completeQuestion;
-
-  @Enumerated(EnumType.STRING)
-  private Priority priority;
 
   private Boolean deleted;
 }

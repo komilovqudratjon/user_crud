@@ -14,28 +14,24 @@ import java.util.Optional;
 @Service
 public class AgreementService {
 
-    @Autowired
-    AgreementRepository agreementRepository;
+  @Autowired AgreementRepository agreementRepository;
 
-    @Autowired
-    AttachmentRepository attachmentRepository;
+  @Autowired AttachmentRepository attachmentRepository;
 
-    public ApiResponseModel addAgreement(ReqAgreement reqAgreement){
-        ApiResponseModel apiResponseModel = new ApiResponseModel();
-        try{
-            Agreement agreement = new Agreement();
-            agreement.setWhy(reqAgreement.getWhy());
-            Optional<Attachment> optionalAttachment = attachmentRepository.findById(reqAgreement.getFileId());
-            agreement.setAFile(optionalAttachment.get());
-            apiResponseModel.setCode(200);
-            apiResponseModel.setMessage("success");
-        }catch(Exception e){
-            apiResponseModel.setCode(500);
-            apiResponseModel.setMessage("success");
-        }
-        return apiResponseModel;
+  public ApiResponseModel addAgreement(ReqAgreement reqAgreement) {
+    ApiResponseModel apiResponseModel = new ApiResponseModel();
+    try {
+      Agreement agreement = new Agreement();
+      agreement.setWhy(reqAgreement.getWhy());
+      Optional<Attachment> optionalAttachment =
+          attachmentRepository.findById(reqAgreement.getFileId());
+      agreement.setAFile(optionalAttachment.get());
+      apiResponseModel.setCode(200);
+      apiResponseModel.setMessage("success");
+    } catch (Exception e) {
+      apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      apiResponseModel.setMessage("success");
     }
-
-
-
+    return apiResponseModel;
+  }
 }

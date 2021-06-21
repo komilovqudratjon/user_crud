@@ -21,44 +21,43 @@ import java.util.*;
 @Service
 public class AttachmentService {
 
-    @Value("${path}")
-    private String upload;
+  @Value("${path}")
+  private String upload;
 
-    @Autowired
-    AttachmentRepository attachmentRepository;
+  @Autowired AttachmentRepository attachmentRepository;
 
-    public ApiResponseModel uploadFile(MultipartHttpServletRequest request){
-        ApiResponseModel response = new ApiResponseModel();
-        Iterator<String> iterator = request.getFileNames();
-        MultipartFile file1;
-        while(iterator.hasNext()){
-            file1 = request.getFile(iterator.next());
-            Calendar calendar = Calendar.getInstance();
-            try{
-                File file = new File("D:\\rasmlar/"+calendar.get(Calendar.DATE)+"/"+file1.getOriginalFilename());
-                file.mkdirs();
-                file1.transferTo(file);
-                Attachment attachment = new Attachment();
-                attachment.setName(file1.getOriginalFilename());
-                attachment.setContent(file1.getContentType());
-                attachment.setSize(file1.getSize());
-                attachment.setPath(file.getPath());
-                attachmentRepository.save(attachment);
-            }catch(Exception e){
-                response.setMessage("error !");
-                response.setCode(500);
-            }
-        }
-
-        return response;
+  public ApiResponseModel uploadFile(MultipartHttpServletRequest request) {
+    ApiResponseModel response = new ApiResponseModel();
+    Iterator<String> iterator = request.getFileNames();
+    MultipartFile file1;
+    while (iterator.hasNext()) {
+      file1 = request.getFile(iterator.next());
+      Calendar calendar = Calendar.getInstance();
+      try {
+        File file =
+            new File(
+                "D:\\rasmlar/" + calendar.get(Calendar.DATE) + "/" + file1.getOriginalFilename());
+        file.mkdirs();
+        file1.transferTo(file);
+        Attachment attachment = new Attachment();
+        attachment.setName(file1.getOriginalFilename());
+        attachment.setContent(file1.getContentType());
+        attachment.setSize(file1.getSize());
+        attachment.setPath(file.getPath());
+        attachmentRepository.save(attachment);
+      } catch (Exception e) {
+        response.setMessage("error !");
+        response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      }
     }
 
-    public HttpEntity<?> getFile(Long id) throws IOException {
-        Optional<Attachment> attachment = attachmentRepository.findById(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(attachment.get().getContent()))
-                .body(Files.readAllBytes(Paths.get(attachment.get().getPath())));
-    }
+    return response;
+  }
 
-
+  public HttpEntity<?> getFile(Long id) throws IOException {
+    Optional<Attachment> attachment = attachmentRepository.findById(id);
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(attachment.get().getContent()))
+        .body(Files.readAllBytes(Paths.get(attachment.get().getPath())));
+  }
 }
