@@ -7,6 +7,7 @@ import com.example.backent.payload.ReqFullQuestion;
 import com.example.backent.repository.AttachmentRepository;
 import com.example.backent.repository.CompleteQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class CompleteQuestionService {
       }
       fullQuestion.setText(reqFullQuestion.getText());
       fullQuestion.setLink(reqFullQuestion.getLink());
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("success !");
     } catch (Exception e) {
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

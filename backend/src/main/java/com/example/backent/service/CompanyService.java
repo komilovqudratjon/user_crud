@@ -7,6 +7,7 @@ import com.example.backent.payload.ReqCompany;
 import com.example.backent.repository.AgreementRepository;
 import com.example.backent.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class CompanyService {
         return apiResponseModel;
       }
       companyRepository.save(company);
-      apiResponseModel.setCode(200);
+      apiResponseModel.setCode(HttpStatus.OK.value());
       apiResponseModel.setMessage("success");
     } catch (Exception e) {
       apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -61,7 +62,7 @@ public class CompanyService {
         response.setMessage("company did not found");
       }
       response.setMessage("deleted");
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
     } catch (Exception e) {
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
       response.setMessage("siz companiyani uchira olmaysiz");
@@ -73,7 +74,7 @@ public class CompanyService {
     ApiResponseModel response = new ApiResponseModel();
     try {
       List<Company> companyList = companyRepository.findAllByDeleted(false);
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("success");
       response.setData(companyList);
     } catch (Exception e) {
@@ -90,7 +91,7 @@ public class CompanyService {
           Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
       if (optionalCompany.isPresent()) {
         response.setData(optionalCompany);
-        response.setCode(200);
+        response.setCode(HttpStatus.OK.value());
         response.setMessage("success");
       } else {
         response.setCode(207);

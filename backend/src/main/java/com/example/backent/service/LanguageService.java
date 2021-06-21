@@ -8,6 +8,7 @@ import com.example.backent.payload.ResLanguage;
 import com.example.backent.repository.AttachmentRepository;
 import com.example.backent.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,7 +41,7 @@ public class LanguageService {
       }
       language.setName(reqLanguage.getName());
       languageRepository.save(language);
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("saved");
     } catch (Exception e) {
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -58,7 +59,7 @@ public class LanguageService {
         languageRepository.save(optionalLanguage.get());
       } else {
         response.setMessage("saved");
-        response.setCode(200);
+        response.setCode(HttpStatus.OK.value());
       }
     } catch (Exception e) {
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -74,7 +75,7 @@ public class LanguageService {
           languageRepository.findAllByDeleted(false).stream()
               .map(this::getLanguage)
               .collect(Collectors.toList());
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("success");
       response.setData(resLanguageList);
     } catch (Exception e) {

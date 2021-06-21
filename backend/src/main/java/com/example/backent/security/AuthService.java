@@ -63,8 +63,6 @@ public class AuthService implements UserDetailsService {
 
   private final MailService mailService;
 
-  private final Configuration config;
-
   @Autowired
   public AuthService(
       UserRepository userRepository,
@@ -75,11 +73,9 @@ public class AuthService implements UserDetailsService {
       UserLanguageRepository usersLanguageRepository,
       AttachmentRepository attachmentRepository,
       MailService mailService,
-      JavaMailSender sender,
       UserFieldsRepository userFieldsRepository,
       UserExperiencesRepository userExperiencesRepository,
-      ProgrammingLanguageRepository programmingLanguageRepository,
-      Configuration config) {
+      ProgrammingLanguageRepository programmingLanguageRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.roleRepository = roleRepository;
@@ -91,7 +87,6 @@ public class AuthService implements UserDetailsService {
     this.userFieldsRepository = userFieldsRepository;
     this.userExperiencesRepository = userExperiencesRepository;
     this.programmingLanguageRepository = programmingLanguageRepository;
-    this.config = config;
   }
 
   @Override

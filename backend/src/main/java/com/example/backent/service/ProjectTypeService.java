@@ -21,7 +21,7 @@ public class ProjectTypeService {
         ProjectType projectType = new ProjectType();
         projectType.setName(type);
         projectTypeRepository.save(projectType);
-        response.setCode(200);
+        response.setCode(HttpStatus.OK.value());
         response.setMessage("success");
       } else {
         response.setCode(207);
@@ -41,7 +41,7 @@ public class ProjectTypeService {
       if (type.isPresent()) {
         type.get().setDeleted(true);
         projectTypeRepository.save(type.get());
-        response.setCode(200);
+        response.setCode(HttpStatus.OK.value());
         response.setMessage("success !");
       } else {
         response.setCode(207);
@@ -57,11 +57,11 @@ public class ProjectTypeService {
   public ApiResponseModel getAll() {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("success");
       response.setData(projectTypeRepository.findAllByDeleted(false));
     } catch (Exception e) {
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("error");
     }
     return response;

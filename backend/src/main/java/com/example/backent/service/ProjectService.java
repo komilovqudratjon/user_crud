@@ -94,7 +94,7 @@ public class ProjectService {
         apiResponseModel.setCode(207);
         apiResponseModel.setMessage("project id did not found");
       }
-      apiResponseModel.setCode(200);
+      apiResponseModel.setCode(HttpStatus.OK.value());
       apiResponseModel.setMessage("success");
     } catch (Exception e) {
       apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -108,11 +108,11 @@ public class ProjectService {
     try {
       List<ResProject> projectList =
           projectRepository.findAll().stream().map(this::getProject).collect(Collectors.toList());
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("success !");
       response.setData(projectList);
     } catch (Exception e) {
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
       response.setMessage("error");
     }
     return response;

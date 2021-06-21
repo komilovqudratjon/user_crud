@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class BoardService {
       Board board = new Board();
       board.setName(reqBoard.getName());
       response.setMessage("success !");
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
     } catch (Exception e) {
       response.setMessage("error !");
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -49,10 +50,10 @@ public class BoardService {
           board.get().setProject(optionalProject.get());
         }
         response.setMessage("success !");
-        response.setCode(200);
+        response.setCode(HttpStatus.OK.value());
       } else {
         response.setMessage("success !");
-        response.setCode(200);
+        response.setCode(HttpStatus.OK.value());
       }
     } catch (Exception e) {
       response.setMessage("error !");
@@ -66,7 +67,7 @@ public class BoardService {
     try {
       boardRepository.deleteById(id);
       response.setMessage("success !");
-      response.setCode(200);
+      response.setCode(HttpStatus.OK.value());
     } catch (Exception e) {
       response.setMessage("boardni uchirib bulmaydi !");
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

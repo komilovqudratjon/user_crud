@@ -15,8 +15,15 @@ public class TicketController {
 
   @Autowired TicketService projectService;
 
+  // **************** TICKET CREATE OR EDIT  ****************//
   @PostMapping
-  public ApiResponseModel addTicket(@RequestBody ReqTicket reqTicket) {
+  public ApiResponseModel addTicketOrEdit(@RequestBody ReqTicket reqTicket) {
     return projectService.addOrEditTicket(reqTicket);
+  }
+
+  // **************** DELETE TICKET ****************//
+  @DeleteMapping("/{id}")
+  public ApiResponseModel deleteTicket(@PathVariable Long id) {
+    return projectService.deleteTicket(id);
   }
 }

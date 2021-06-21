@@ -7,6 +7,7 @@ import com.example.backent.payload.ReqAgreement;
 import com.example.backent.repository.AgreementRepository;
 import com.example.backent.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class AgreementService {
       Optional<Attachment> optionalAttachment =
           attachmentRepository.findById(reqAgreement.getFileId());
       agreement.setAFile(optionalAttachment.get());
-      apiResponseModel.setCode(200);
+      apiResponseModel.setCode(HttpStatus.OK.value());
       apiResponseModel.setMessage("success");
     } catch (Exception e) {
       apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

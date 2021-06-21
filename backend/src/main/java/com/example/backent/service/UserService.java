@@ -2,10 +2,12 @@ package com.example.backent.service;
 
 import com.example.backent.entity.FieldsForUsers;
 import com.example.backent.entity.UsersLanguage;
+import com.example.backent.entity.enums.RoleName;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqIdAndName;
 import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -101,5 +103,16 @@ public class UserService {
     } catch (Exception e) {
       return new ApiResponseModel(HttpStatus.CONFLICT.value(), e.getMessage());
     }
+  }
+
+  public HttpEntity<?> getAllUsers(
+      String startTime,
+      String endTime,
+      RoleName roleName,
+      Integer page,
+      Integer size,
+      String search,
+      Boolean isActive) {
+    return null;
   }
 }

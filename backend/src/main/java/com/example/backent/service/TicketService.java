@@ -1,12 +1,11 @@
 package com.example.backent.service;
 
-import com.example.backent.entity.Board;
-import com.example.backent.entity.Ticket;
-import com.example.backent.entity.User;
+import com.example.backent.entity.*;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqTicket;
 import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,9 +31,8 @@ public class TicketService {
     ticket.setHoursWorker(reqTicket.getHoursWorker());
     ticket.setHoursTester(reqTicket.getHoursTester());
     ticket.setBoard(getBoard(reqTicket.getBoard()));
-    ticket.setProgramingLanguage(
-        programmingLanguageRepository.getById(reqTicket.getProgramingLanguage()));
-    ticket.setCompleteQuestion(completeQuestionRepository.getById(ticket.getId()));
+    ticket.setProgramingLanguage(getProgramingLanguage(reqTicket.getProgramingLanguage()));
+    ticket.setCompleteQuestion(getCompleteQuestion(ticket.getId()));
     ticketRepository.save(ticket);
     return new ApiResponseModel();
   }
@@ -47,6 +45,28 @@ public class TicketService {
       return new Ticket();
     } catch (Exception e) {
       return new Ticket();
+    }
+  }
+
+  public ProgramingLanguage getProgramingLanguage(Long id) {
+    try {
+      if (id != null) {
+        return programmingLanguageRepository.getById(id);
+      }
+      return new ProgramingLanguage();
+    } catch (Exception e) {
+      return new ProgramingLanguage();
+    }
+  }
+
+  public CompleteQuestion getCompleteQuestion(Long id) {
+    try {
+      if (id != null) {
+        return completeQuestionRepository.getById(id);
+      }
+      return new CompleteQuestion();
+    } catch (Exception e) {
+      return new CompleteQuestion();
     }
   }
 
@@ -69,6 +89,15 @@ public class TicketService {
       return new Board();
     } catch (Exception e) {
       return new Board();
+    }
+  }
+
+  public ApiResponseModel deleteTicket(Long id) {
+    try {
+      ticketRepository.deleteById(id);
+      return new ApiResponseModel(HttpStatus.OK.value(), "delete");
+    } catch (Exception e) {
+      return new ApiResponseModel(HttpStatus.CONTINUE.value(), "not delete");
     }
   }
 }
