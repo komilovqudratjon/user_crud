@@ -55,8 +55,7 @@ public class UserController {
     return userService.deleteDelete(id);
   }
 
-  // ************** GET USER
-
+  // ************** GET USER  ****************//
   @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
   @GetMapping("/user")
   public HttpEntity<?> getUsers(
