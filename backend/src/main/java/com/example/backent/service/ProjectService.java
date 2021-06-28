@@ -46,14 +46,14 @@ public class ProjectService {
                     return apiResponseModel;
                 }
             }
-            Optional<ProjectType> type = typeRepository.findById(reqProject.getType());
-            if (type.isPresent()){
-                project.setType(type.get());
-            }else {
-                apiResponseModel.setCode(207);
-                apiResponseModel.setMessage("bunaqa id lik type mavjud emas");
-                return apiResponseModel;
-            }
+//            Optional<ProjectType> type = typeRepository.findById(reqProject.getType());
+//            if (type.isPresent()){
+//                project.setType(type.get());
+//            }else {
+//                apiResponseModel.setCode(207);
+//                apiResponseModel.setMessage("bunaqa id lik type mavjud emas");
+//                return apiResponseModel;
+//            }
             Optional<Company> optionalCompany = companyRepository.findById(reqProject.getCompanyId());
             if (optionalCompany.isPresent()) {
                 project.setCompany(optionalCompany.get());
@@ -147,7 +147,6 @@ public class ProjectService {
         return new ResProject(
                 project.getId(),
                 project.getName(),
-                project.getType(),
                 project.getCompany(),
                 getListLink(project.getAgreementList())
         );
@@ -160,4 +159,18 @@ public class ProjectService {
         }
         return list1;
     }
+
+//    public ApiResponseModel projectCondition(Long id){
+//        ApiResponseModel response = new ApiResponseModel();
+//        try{
+//            Optional<Project> project = projectRepository.findById(id);
+//            if(){
+//
+//            }
+//
+//        }catch(Exception e){
+//
+//        }
+//    }
+
 }
