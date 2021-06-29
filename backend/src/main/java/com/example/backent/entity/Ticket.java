@@ -1,5 +1,6 @@
 package com.example.backent.entity;
 
+import com.example.backent.entity.enums.TicketCondition;
 import com.example.backent.entity.enums.WorkType;
 import com.example.backent.entity.template.AbsEntity;
 import lombok.AllArgsConstructor;
@@ -38,4 +39,11 @@ public class Ticket extends AbsEntity {
   @OneToOne private CompleteQuestion completeQuestion;
 
   private boolean deleted;
+
+  @ManyToOne private ProjectType projectType;
+
+  @Enumerated(EnumType.STRING)
+  private TicketCondition ticketCondition;
+
+  @ManyToOne private Tag tag;
 }

@@ -12,7 +12,6 @@ import java.util.List;
 public class ResProject {
     private Long id;
     private String name;
-    private ProjectType type;
     private Company company;
     private List<String> agreement;
 }

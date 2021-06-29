@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/language")
+@RequestMapping("/api/language")
 public class LanguageController {
 
   @Autowired LanguageService languageService;

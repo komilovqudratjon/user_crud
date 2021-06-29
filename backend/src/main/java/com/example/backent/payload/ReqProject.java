@@ -14,6 +14,5 @@ public class ReqProject {
   private Long id;
   private String name;
   private Long companyId;
-  private Long type;
   private List<Long> agreements;
 }
