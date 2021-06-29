@@ -13,17 +13,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/ticket")
 public class TicketController {
 
-  @Autowired TicketService projectService;
+  @Autowired TicketService ticketService;
 
   // **************** TICKET CREATE OR EDIT  ****************//
   @PostMapping
   public ApiResponseModel addTicketOrEdit(@RequestBody ReqTicket reqTicket) {
-    return projectService.addOrEditTicket(reqTicket);
+    return ticketService.addOrEditTicket(reqTicket);
   }
 
   // **************** DELETE TICKET ****************//
   @DeleteMapping("/{id}")
   public ApiResponseModel deleteTicket(@PathVariable Long id) {
-    return projectService.deleteTicket(id);
+    return ticketService.deleteTicket(id);
   }
+
+  @GetMapping("/backlog")
+  public HttpEntity<?> backlog(@RequestParam("id") Long id){
+    ApiResponseModel response = ticketService.backLock(id);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/filter")
+  public HttpEntity<?> filter(@RequestParam Long projectId , @RequestParam String type, @RequestParam Long tagId){
+    ApiResponseModel response = ticketService.filterTicket(projectId, type, tagId);
+    return ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/edit")
+  public HttpEntity<?> editTicket(@RequestBody ReqTicket reqTicket){
+    ApiResponseModel response = ticketService.editTicket(reqTicket);
+    return ResponseEntity.ok(response);
+  }
+
 }

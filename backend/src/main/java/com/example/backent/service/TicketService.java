@@ -26,6 +26,8 @@ public class TicketService {
 
   @Autowired CompleteQuestionRepository completeQuestionRepository;
 
+  @Autowired ProjectRepository projectRepository;
+
   public ApiResponseModel addOrEditTicket(ReqTicket reqTicket) {
     Ticket ticket = getTicket(reqTicket.getId());
     ticket.setWorkType(reqTicket.getWorkType());
@@ -135,17 +137,6 @@ public class TicketService {
     return response;
   }
 
-//  public ApiResponseModel editTicket(ReqTicket reqTicket){
-//    ApiResponseModel response = new ApiResponseModel();
-//    try{
-//      Optional<Ticket> ticket = ticketRepository.findById(reqTicket.getId());
-//    }catch(Exception e){
-//      response.setCode(500);
-//      response.setMessage("error");
-//    }
-//    return response;
-//  }
-
   public ResTicket getTicket(Ticket ticket){
     return new ResTicket(
             ticket.getId(),
@@ -185,5 +176,71 @@ public class TicketService {
             ),
             ticket.getTag()
     );
+  }
+
+  public ApiResponseModel editTicket(ReqTicket reqTicket){
+    ApiResponseModel response = new ApiResponseModel();
+    try{
+      Optional<Ticket> ticket = ticketRepository.findById(reqTicket.getId());
+      if(ticket.isPresent()){
+        if(reqTicket.getBoard()!=null){
+          Optional<Board> board = boardRepository.findById(reqTicket.getBoard());
+          if(board.isPresent()){
+            ticket.get().setBoard(board.get());
+          }else{
+            response.setCode(207);
+            response.setMessage("bunaqa idlik board mavjud emas!");
+            return response;
+          }
+        }
+        if(reqTicket.getCompleteQuestion()!=null){
+          Optional<CompleteQuestion> question = completeQuestionRepository.findById(reqTicket.getCompleteQuestion());
+          if(question.isPresent()){
+            ticket.get().setCompleteQuestion(question.get());
+          }else{
+            response.setCode(207);
+            response.setMessage("bunaqa idlik complate question mavjud emas!");
+            return response;
+          }
+        }
+        if(reqTicket.getHoursWorker()!=null){
+          ticket.get().setHoursWorker(reqTicket.getHoursWorker());
+        }
+        if(reqTicket.getWorkerId()!=null){
+          Optional<User> worker = userRepository.findById(reqTicket.getWorkerId());
+          if(worker.isPresent()){
+            ticket.get().setWorker(worker.get());
+            ticket.get().setTicketCondition(TicketCondition.ATTACHED);
+          }else{
+            response.setCode(207);
+            response.setMessage("bunaqa idlik worker mavjud emas");
+            return response;
+          }
+        }
+        if(reqTicket.getPmId()!=null){
+          Optional<User> pm = userRepository.findById(reqTicket.getPmId());
+          if(pm.isPresent()){
+            ticket.get().setPm(pm.get());
+          }else{
+            response.setCode(207);
+            response.setMessage("bunaqa idlik ticket mavjud emas");
+            return response;
+          }
+        }
+        if(reqTicket.getText()!=null){
+          ticket.get().setText(reqTicket.getText());
+        }
+        if(reqTicket.getWorkType()!=null){
+          ticket.get().setWorkType(reqTicket.getWorkType());
+        }
+      }else{
+        response.setCode(207);
+        response.setMessage("bunaqa idlik ticket mavjud emas");
+      }
+    }catch(Exception e){
+      response.setCode(500);
+      response.setMessage("error");
+    }
+    return response;
   }
 }

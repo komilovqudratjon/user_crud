@@ -16,4 +16,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query(value = "select * from ticket where board_id in (select board.id from board where project_id in (select project.id from project where project.id=:id)) and ticket_condition='CREATED'",nativeQuery = true)
     List<Ticket> backlog(@Param("id") Long id);
+
+    @Query(value = "select count(hours_worker) from ticket where board_id in (select board.id from board where board_condition='DONE' and project_id in (select project.id from project where project.id=:id))",nativeQuery = true)
+    Long findDoneTicket(@Param("id") Long id);
+
+    @Query(value = "select count(hours_worker) from ticket where board_id in (select board.id from board where project_id in (select project.id from project where project.id=:id))",nativeQuery = true)
+    Long allTicketByProject(@Param("id") Long id);
 }

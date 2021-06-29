@@ -2,8 +2,7 @@ package com.example.backent.controller;
 
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqLanguage;
-import com.example.backent.repository.LanguageRepository;
-import com.example.backent.service.LanguageService;
+import com.example.backent.service.ProgrammingLanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class LanguageController {
 
     @Autowired
-    LanguageService languageService;
+    ProgrammingLanguageService languageService;
 
     @PostMapping
     public HttpEntity<?> addLanguage(@RequestBody ReqLanguage reqLanguage){

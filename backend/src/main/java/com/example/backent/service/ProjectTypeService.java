@@ -1,12 +1,15 @@
 package com.example.backent.service;
 
 import com.example.backent.entity.ProjectType;
+import com.example.backent.entity.Ticket;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.repository.ProjectTypeRepository;
+import com.example.backent.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,4 +69,5 @@ public class ProjectTypeService {
     }
     return response;
   }
+
 }
