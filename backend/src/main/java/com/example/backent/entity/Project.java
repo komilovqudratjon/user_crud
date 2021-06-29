@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 public class Project extends AbsEntity {
 
-  private String name;
+  private String name; // REQUIRED
 
   @ManyToOne private Company company;
 

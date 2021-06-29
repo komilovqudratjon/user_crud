@@ -1,9 +1,11 @@
 package com.example.backent.controller;
 
+import com.example.backent.entity.User;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqSignIn;
 import com.example.backent.payload.ReqSignUp;
 import com.example.backent.security.AuthService;
+import com.example.backent.security.CurrentUser;
 import com.example.backent.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,13 @@ public class AuthController {
   @Autowired AuthenticationManager authenticate;
 
   @Autowired AuthService authService;
+
+  // **************** GET  YOURSELF  ****************//
+  @GetMapping("/me")
+  public ApiResponseModel getUser(@CurrentUser User user) {
+    return new ApiResponseModel(
+        user != null ? 200 : 204, user != null ? "user info" : "Error", user);
+  }
 
   // **************** REGISTER USER ****************//
   @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")

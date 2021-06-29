@@ -4,11 +4,12 @@ import com.example.backent.entity.UserExperience;
 import com.example.backent.entity.enums.Family;
 import com.example.backent.entity.enums.RoleName;
 import com.example.backent.entity.enums.WorkTimeType;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
 import java.util.Date;
 import java.util.List;
 
@@ -16,23 +17,23 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReqSignUp {
-  private String firstname;
-  private String lastname;
+  @NotNull() private String firstname;
+  @NotNull private String lastname;
   private String middleName;
   private String address;
-  private String phoneNumber;
+  @NotNull private String phoneNumber;
   private Date dateOfBirth;
   private String passportNumber;
-  private String password;
-  private String email;
+  @NotNull private String password;
+  @Email private String email;
   private boolean active;
   private Date startWorkingTime;
   private WorkTimeType workTimeType;
   private Family family;
   private List<Long> language;
   private Long photoId;
-  private List<Long> fields;
+  @NotNull private List<Long> fields;
   private List<UserExperience> experiences; // gson
   private List<Long> programingLanguages;
-  private RoleName roles;
+  private List<RoleName> roles;
 }
