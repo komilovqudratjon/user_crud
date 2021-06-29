@@ -1,10 +1,11 @@
 package com.example.backent.component;
 
-import com.example.backent.entity.Role;
-import com.example.backent.entity.User;
+import com.example.backent.entity.*;
+import com.example.backent.entity.enums.Family;
 import com.example.backent.entity.enums.RoleName;
-import com.example.backent.repository.RoleRepository;
-import com.example.backent.repository.UserRepository;
+import com.example.backent.entity.enums.TimeType;
+import com.example.backent.entity.enums.WorkTimeType;
+import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -12,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -25,24 +28,57 @@ public class DataLoader implements CommandLineRunner {
 
   @Autowired PasswordEncoder passwordEncoder;
 
+  @Autowired UserLanguageRepository userLanguageRepository;
+
+  @Autowired UserFieldsRepository userFieldsRepository;
+
+  @Autowired UserExperiencesRepository userExperiencesRepository;
+
   @Override
   public void run(String... args) {
 
     if (roleRepository.count() == 0) {
-      roleRepository.save(new Role(1, RoleName.USER));
-      roleRepository.save(new Role(2, RoleName.ADMIN));
-      roleRepository.save(new Role(3, RoleName.SUPER_ADMIN));
+      int i = 1;
+      for (RoleName value : RoleName.values()) {
+        roleRepository.save(new Role(i, value));
+        i++;
+      }
     }
 
     if (initialMode) {
 
       userRepository.save(
           new User(
-              "koinot",
-              passwordEncoder.encode("koinot"),
               "Qudratjon",
               "Komilov",
-              roleRepository.findAllByNameIn(Collections.singletonList(RoleName.SUPER_ADMIN))));
+              "Qobil o'g'li",
+              "Ko'kcha masjit",
+              WorkTimeType.FULL_TIME,
+              Family.NOT_MARRED,
+              "AB53939666",
+              new Date(1999, 3, 3),
+              new Date(2020, 10, 20),
+              "+99891779778",
+              "koinot@koinot.com",
+              List.of(
+                  userFieldsRepository.save(new FieldsForUsers("backend")),
+                  userFieldsRepository.save(new FieldsForUsers("frontend")),
+                  userFieldsRepository.save(new FieldsForUsers("tester")),
+                  userFieldsRepository.save(new FieldsForUsers("design"))),
+              List.of(
+                  userExperiencesRepository.save(
+                      new UserExperience("postgres", 6l, TimeType.MONTH)),
+                  userExperiencesRepository.save(
+                      new UserExperience("postgres", 6l, TimeType.MONTH))),
+              List.of(
+                  userLanguageRepository.save(new UsersLanguage("uz")),
+                  userLanguageRepository.save(new UsersLanguage("en")),
+                  userLanguageRepository.save(new UsersLanguage("ru"))),
+              null,
+              passwordEncoder.encode("koinot"),
+              true,
+              roleRepository.findAllByNameIn(Collections.singletonList(RoleName.SUPER_ADMIN)),
+              null));
     }
   }
 }

@@ -10,14 +10,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReqCompany {
-
-    private Long id;
-    private String name;
-//    **** data for edit ****
-    private List<Long> deleteFile;
-
-    public ReqCompany(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+  private Long id;
+  private String name;
+  private String responsiblePerson;
+  private Long balance;
+  private Long oked;
+  private Long mfo;
+  private Long stir;
+  private String phoneNumber;
+  private String email;
+  private String address;
+  private List<Long> deleteFile;
 }

@@ -1,10 +1,7 @@
 package com.example.backent.entity;
 
 import com.example.backent.entity.template.AbsEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,13 +11,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class Company extends AbsEntity {
 
+  private String name; // REQUIRED
+  private String responsiblePerson;
+  private Long balance;
+  private Long oked;
+  private Long mfo;
+  private Long stir;
+  private String phoneNumber; // REQUIRED
+  private String email;
+  private String address;
 
-    private String name;
+  @OneToMany private List<Agreement> agreement;
 
-//    @OneToMany
-//    private List<Agreement> agreement;
-
-    private boolean deleted;
+  private boolean deleted;
 }

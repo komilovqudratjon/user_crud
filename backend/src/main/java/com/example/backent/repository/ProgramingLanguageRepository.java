@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LanguageRepository extends JpaRepository<ProgramingLanguage, Long> {
-    List<ProgramingLanguage> findAllByDeleted(Boolean deleted);
+public interface ProgramingLanguageRepository extends JpaRepository<ProgramingLanguage, Long> {
+  List<ProgramingLanguage> findAllByDeleted(Boolean deleted);
 }

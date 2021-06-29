@@ -3,7 +3,6 @@ package com.example.backent.entity;
 import com.example.backent.entity.enums.Family;
 import com.example.backent.entity.enums.WorkTimeType;
 import com.example.backent.entity.template.AbsEntity;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,16 +22,18 @@ import java.util.List;
 @AllArgsConstructor
 public class User extends AbsEntity implements UserDetails {
 
-  private String firstname;
+  @Column(nullable = false)
+  private String firstname; // REQUIRED
 
-  private String lastname;
+  @Column(nullable = false)
+  private String lastname; // REQUIRED
 
   private String middlename;
 
   private String address;
 
   @Enumerated(EnumType.STRING)
-  private WorkTimeType workTimeType;
+  private WorkTimeType workTimeType; // REQUIRED
 
   @Enumerated(EnumType.STRING)
   private Family family;
@@ -44,22 +45,24 @@ public class User extends AbsEntity implements UserDetails {
 
   private Date startWorkingTime;
 
-  @Column(unique = true)
-  private String phoneNumber;
+  @Column(nullable = false, unique = true)
+  private String phoneNumber; // REQUIRED
 
-  @Column(unique = true)
-  @NotNull
-  private String email;
+  @Column(nullable = false, unique = true)
+  private String email; // REQUIRED
 
-  @ManyToMany private List<FieldsForUsers> fields;
+  @Column(nullable = false)
+  @ManyToMany
+  private List<FieldsForUsers> fields; // REQUIRED
 
-  @ManyToMany private List<UserExperience> experiences;
+  @ManyToMany private List<UserExperience> experiences; // REQUIRED
 
-  @ManyToMany private List<UsersLanguage> languages;
+  @ManyToMany private List<UsersLanguage> languages; // REQUIRED
 
   @ManyToMany private List<ProgramingLanguage> programingLanguages;
 
-  @NotNull private String password;
+  @Column(nullable = false)
+  private String password; // REQUIRED
 
   @OneToOne(fetch = FetchType.LAZY)
   private Attachment avatar;

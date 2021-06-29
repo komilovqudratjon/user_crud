@@ -1,10 +1,10 @@
 package com.example.backent.service;
 
-import com.example.backent.entity.Agreement;
 import com.example.backent.entity.Company;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqCompany;
 import com.example.backent.repository.AgreementRepository;
+import com.example.backent.repository.AttachmentRepository;
 import com.example.backent.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,12 +12,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CompanyService {
 
   @Autowired CompanyRepository companyRepository;
   @Autowired AgreementRepository agreementRepository;
+  @Autowired AttachmentRepository attachmentRepository;
 
   public ApiResponseModel addOrEditCompany(ReqCompany reqCompany) {
     ApiResponseModel apiResponseModel = new ApiResponseModel();
@@ -32,8 +35,21 @@ public class CompanyService {
 
       if (!companyRepository.existsByName(reqCompany.getName())) {
         company.setName(reqCompany.getName());
+        company.setResponsiblePerson(reqCompany.getResponsiblePerson());
+        company.setBalance(reqCompany.getBalance());
+        company.setOked(reqCompany.getOked());
+        company.setMfo(reqCompany.getMfo());
+        company.setStir(reqCompany.getStir());
+        company.setPhoneNumber(reqCompany.getPhoneNumber());
+        company.setEmail(reqCompany.getEmail());
+        company.setAddress(reqCompany.getAddress());
+        company.setAgreement(
+            Stream.concat(
+                    company.getAgreement().stream(),
+                    agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
+                .collect(Collectors.toList()));
       } else {
-        apiResponseModel.setCode(207);
+        apiResponseModel.setCode(HttpStatus.MULTI_STATUS.value());
         apiResponseModel.setMessage("bunaqa nomli comoany mavjud !");
         return apiResponseModel;
       }
@@ -58,7 +74,7 @@ public class CompanyService {
         company.setDeleted(true);
         companyRepository.save(company);
       } else {
-        response.setCode(207);
+        response.setCode(HttpStatus.MULTI_STATUS.value());
         response.setMessage("company did not found");
       }
       response.setMessage("deleted");
@@ -94,7 +110,7 @@ public class CompanyService {
         response.setCode(HttpStatus.OK.value());
         response.setMessage("success");
       } else {
-        response.setCode(207);
+        response.setCode(HttpStatus.MULTI_STATUS.value());
         response.setMessage("bunaqa idlik campaniya mavjud emas");
       }
     } catch (Exception e) {
@@ -102,9 +118,5 @@ public class CompanyService {
       response.setMessage("error");
     }
     return response;
-  }
-
-  public ReqCompany getOneCompany(Company company) {
-    return new ReqCompany(company.getId(), company.getName());
   }
 }

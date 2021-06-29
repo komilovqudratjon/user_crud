@@ -128,7 +128,7 @@ public class AuthService implements UserDetailsService {
             programmingLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
             passwordEncoder.encode(reqSignUp.getPassword()),
             reqSignUp.isActive(),
-            roleRepository.findAllByNameIn(List.of(reqSignUp.getRoles())),
+            roleRepository.findAllByNameIn(reqSignUp.getRoles()),
             getPhoto(reqSignUp.getPhotoId())));
     mailService.sendEmail(
         reqSignUp.getFirstname() + " " + reqSignUp.getLastname(),
