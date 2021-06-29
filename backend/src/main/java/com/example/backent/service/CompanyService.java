@@ -95,7 +95,7 @@ public class CompanyService {
       response.setData(companyList);
     } catch (Exception e) {
       response.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-      response.setMessage("error");
+      response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }
     return response;
   }

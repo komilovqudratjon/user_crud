@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class LanguageService {
+public class ProgrammingLanguageService {
 
   @Autowired ProgramingLanguageRepository programingLanguageRepository;
   @Autowired AttachmentRepository attachmentRepository;

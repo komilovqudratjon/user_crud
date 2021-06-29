@@ -7,10 +7,7 @@ import com.example.backent.entity.ProjectType;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqProject;
 import com.example.backent.payload.ResProject;
-import com.example.backent.repository.AgreementRepository;
-import com.example.backent.repository.CompanyRepository;
-import com.example.backent.repository.ProjectRepository;
-import com.example.backent.repository.ProjectTypeRepository;
+import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -31,6 +28,10 @@ public class ProjectService {
     AgreementRepository agreementRepository;
     @Autowired
     ProjectTypeRepository typeRepository;
+    @Autowired
+    TicketRepository ticketRepository;
+
+
 
     public ApiResponseModel addOrEditProject(ReqProject reqProject) {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
@@ -160,17 +161,26 @@ public class ProjectService {
         return list1;
     }
 
-//    public ApiResponseModel projectCondition(Long id){
-//        ApiResponseModel response = new ApiResponseModel();
-//        try{
-//            Optional<Project> project = projectRepository.findById(id);
-//            if(){
-//
-//            }
-//
-//        }catch(Exception e){
-//
-//        }
-//    }
+    public ApiResponseModel projectCondition(Long id){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            Optional<Project> project = projectRepository.findById(id);
+            if(project.isPresent()){
+                Long all = ticketRepository.allTicketByProject(id);
+                Long done = ticketRepository.findDoneTicket(id);
+                response.setCode(200);
+                response.setMessage("success");
+                response.setData(done/all);
+            }else{
+                response.setMessage("bunaqa idlik project mavjud emas");
+                response.setCode(207);
+            }
+        }catch(Exception e){
+            response.setMessage("error");
+            response.setCode(500);
+        }
+        return response;
+    }
+
 
 }

@@ -39,5 +39,10 @@ public class ProjectController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/process/{id}")
+    public HttpEntity<?> getProcess(@PathVariable Long id){
+        ApiResponseModel response = projectService.projectCondition(id);
+        return ResponseEntity.ok(response);
+    }
 
 }
