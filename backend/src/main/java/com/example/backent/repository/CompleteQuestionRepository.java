@@ -4,6 +4,10 @@ import com.example.backent.entity.CompleteQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-public interface CompleteQuestionRepository extends JpaRepository<CompleteQuestion, Long> {
+import java.util.List;
+import java.util.Optional;
 
+public interface CompleteQuestionRepository extends JpaRepository<CompleteQuestion, Long> {
+    List<CompleteQuestion> findAllByDeleted(boolean deleted);
+    Optional<CompleteQuestion> findByIdAndDeleted(Long id, boolean deleted);
 }

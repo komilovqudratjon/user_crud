@@ -146,25 +146,29 @@ public class TicketService {
                     ticket.getWorker().getId(),
                     ticket.getWorker().getFirstname(),
                     ticket.getWorker().getEmail(),
-                    ticket.getWorker()!=null? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
+                    ticket.getWorker()!=null?
+                            ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
                     ) : null,
             ticket.getWorker()!=null ? new ResUser(
                     ticket.getWorker().getId(),
                     ticket.getWorker().getFirstname(),
                     ticket.getWorker().getEmail(),
-                    ticket.getWorker()!=null? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
+                    ticket.getWorker()!=null?
+                            ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
             ) : null,
             ticket.getWorker()!=null ? new ResUser(
                     ticket.getWorker().getId(),
                     ticket.getWorker().getFirstname(),
                     ticket.getWorker().getEmail(),
-                    ticket.getWorker()!=null? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
+                    ticket.getWorker()!=null?
+                            ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
             ) : null,
             ticket.getHoursWorker(),
             ticket.getHoursTester(),
             ticket.getProgramingLanguage()!=null ? new ResLanguage(
                     ticket.getProgramingLanguage().getId(),
-                    ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getProgramingLanguage().getLogo().getId().toString()).toUriString(),
+                    ticket.getProgramingLanguage().getLogo()!=null?
+                            ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getProgramingLanguage().getLogo().getId().toString()).toUriString():null,
                     ticket.getProgramingLanguage().getName()
             ):null,
             new ResCompleteQuestion(

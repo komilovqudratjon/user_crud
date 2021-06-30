@@ -21,5 +21,5 @@ public class ProgramingLanguage extends AbsEntity {
 
   private String name;
 
-  private Boolean deleted;
+  private boolean deleted;
 }

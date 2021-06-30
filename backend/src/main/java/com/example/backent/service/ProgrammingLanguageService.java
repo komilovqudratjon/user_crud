@@ -26,16 +26,24 @@ public class ProgrammingLanguageService {
     ProgramingLanguage language = new ProgramingLanguage();
     try {
       if (reqLanguage.getId() != null) {
-        Optional<ProgramingLanguage> optionalLanguage =
-            programingLanguageRepository.findById(reqLanguage.getId());
+        Optional<ProgramingLanguage> optionalLanguage = programingLanguageRepository.findByIdAndDeleted(reqLanguage.getId(),false);
         if (optionalLanguage.isPresent()) {
           language = optionalLanguage.get();
+        }else{
+          response.setCode(207);
+          response.setMessage("LANGUAGE ID : "+reqLanguage.getId()+" did not found");
+          return response;
         }
       }
-      Optional<Attachment> optionalAttachment =
-          attachmentRepository.findById(reqLanguage.getLogo());
-      if (optionalAttachment.isPresent()) {
-        language.setLogo(optionalAttachment.get());
+      if(reqLanguage.getLogo()!=null){
+        Optional<Attachment> optionalAttachment = attachmentRepository.findById(reqLanguage.getLogo());
+        if (optionalAttachment.isPresent()) {
+          language.setLogo(optionalAttachment.get());
+        }else{
+          response.setCode(207);
+          response.setMessage("LANGUAGE PHOTO ID : "+reqLanguage.getLogo()+" did not found");
+          return response;
+        }
       }
       language.setName(reqLanguage.getName());
       programingLanguageRepository.save(language);
@@ -51,14 +59,17 @@ public class ProgrammingLanguageService {
   public ApiResponseModel deleteLanguage(Long id) {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      Optional<ProgramingLanguage> optionalLanguage = programingLanguageRepository.findById(id);
+      Optional<ProgramingLanguage> optionalLanguage = programingLanguageRepository.findByIdAndDeleted(id,false);
       if (optionalLanguage.isPresent()) {
-        optionalLanguage.get().setDeleted(false);
+        optionalLanguage.get().setDeleted(true);
         programingLanguageRepository.save(optionalLanguage.get());
       } else {
-        response.setMessage("saved");
-        response.setCode(200);
+        response.setMessage("LANGUAGE ID : "+id+" DID NOT FOUND ");
+        response.setCode(207);
+        return response;
       }
+      response.setMessage("saved");
+      response.setCode(200);
     } catch (Exception e) {
       response.setCode(500);
       response.setMessage("error");
@@ -86,15 +97,15 @@ public class ProgrammingLanguageService {
   public ApiResponseModel getOneLanguage(Long id) {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      Optional<ProgramingLanguage> language = programingLanguageRepository.findById(id);
+      Optional<ProgramingLanguage> language = programingLanguageRepository.findByIdAndDeleted(id,false);
       if (language.isPresent()) {
         ResLanguage resLanguage = getLanguage(language.get());
         response.setMessage("success !");
         response.setCode(200);
         response.setData(resLanguage);
       } else {
-        response.setMessage("error !");
-        response.setCode(500);
+        response.setMessage("LANGUAGE ID : "+id+" DID NOT FOUND");
+        response.setCode(207);
       }
     } catch (Exception e) {
       response.setCode(500);
@@ -106,7 +117,7 @@ public class ProgrammingLanguageService {
   public ResLanguage getLanguage(ProgramingLanguage language) {
     return new ResLanguage(
         language.getId(),
-        ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(language.getLogo().getId().toString()).toUriString(),
+        language.getLogo()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(language.getLogo().getId().toString()).toUriString():null,
         language.getName());
   }
 }

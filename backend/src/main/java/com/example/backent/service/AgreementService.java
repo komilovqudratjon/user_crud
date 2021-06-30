@@ -59,7 +59,7 @@ public class AgreementService {
         return new ResAgreement(
                 agreement.getId(),
                 agreement.getWhy(),
-                ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(agreement.getAFile().getId().toString()).toUriString()
+                agreement.getAFile()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(agreement.getAFile().getId().toString()).toUriString():null
         );
     }
 

@@ -157,7 +157,7 @@ public class ProjectService {
     public List<String> getListLink(List<Agreement> list){
         List<String> list1 = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            list1.add(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(list.get(i).getAFile().getId().toString()).toUriString());
+            list1.add(list.get(i).getAFile()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(list.get(i).getAFile().getId().toString()).toUriString():"null");
         }
         return list1;
     }
