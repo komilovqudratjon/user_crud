@@ -33,4 +33,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
           String address);
 
   boolean existsByEmail(String phoneNumber);
+
+  boolean existsByPassportNumber(String passportNumber);
+
+  boolean existsByPhoneNumber(String phoneNumber);
 }

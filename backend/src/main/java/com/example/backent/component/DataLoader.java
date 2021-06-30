@@ -12,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -56,8 +57,8 @@ public class DataLoader implements CommandLineRunner {
               WorkTimeType.FULL_TIME,
               Family.NOT_MARRED,
               "AB53939666",
-              new Date(1999, 3, 3),
-              new Date(2020, 10, 20),
+              new Date(1999, Calendar.MARCH, 3),
+              new Date(2020, Calendar.NOVEMBER, 20),
               "+99891779778",
               "koinot@koinot.com",
               List.of(
@@ -67,9 +68,9 @@ public class DataLoader implements CommandLineRunner {
                   userFieldsRepository.save(new FieldsForUsers("design"))),
               List.of(
                   userExperiencesRepository.save(
-                      new UserExperience("postgres", 6l, TimeType.MONTH)),
+                      new UserExperience("postgres", 6L, TimeType.MONTH)),
                   userExperiencesRepository.save(
-                      new UserExperience("postgres", 6l, TimeType.MONTH))),
+                      new UserExperience("postgres", 6L, TimeType.MONTH))),
               List.of(
                   userLanguageRepository.save(new UsersLanguage("uz")),
                   userLanguageRepository.save(new UsersLanguage("en")),

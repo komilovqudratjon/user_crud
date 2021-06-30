@@ -50,9 +50,9 @@ public class TicketService {
       if (id != null) {
         return ticketRepository.getById(id);
       }
-      return new Ticket();
+      return null;
     } catch (Exception e) {
-      return new Ticket();
+      return null;
     }
   }
 
@@ -61,9 +61,9 @@ public class TicketService {
       if (id != null) {
         return programmingLanguageRepository.getById(id);
       }
-      return new ProgramingLanguage();
+      return null;
     } catch (Exception e) {
-      return new ProgramingLanguage();
+      return null;
     }
   }
 
@@ -72,9 +72,9 @@ public class TicketService {
       if (id != null) {
         return completeQuestionRepository.getById(id);
       }
-      return new CompleteQuestion();
+      return null;
     } catch (Exception e) {
-      return new CompleteQuestion();
+      return null;
     }
   }
 
@@ -83,9 +83,9 @@ public class TicketService {
       if (id != null) {
         return userRepository.getById(id);
       }
-      return new User();
+      return null;
     } catch (Exception e) {
-      return new User();
+      return null;
     }
   }
 
@@ -94,9 +94,9 @@ public class TicketService {
       if (id != null) {
         return boardRepository.getById(id);
       }
-      return new Board();
+      return null;
     } catch (Exception e) {
-      return new Board();
+      return null;
     }
   }
 
@@ -109,135 +109,166 @@ public class TicketService {
     }
   }
 
-  public ApiResponseModel backLock(Long projectId){
-    ApiResponseModel response= new ApiResponseModel();
-    try{
-      List<ResTicket> backlog = ticketRepository.backlog(projectId).stream().map(this::getTicket).collect(Collectors.toList());
+  public ApiResponseModel backLock(Long projectId) {
+    ApiResponseModel response = new ApiResponseModel();
+    try {
+      List<ResTicket> backlog =
+          ticketRepository.backlog(projectId).stream()
+              .map(this::getTicket)
+              .collect(Collectors.toList());
       response.setData(backlog);
       response.setCode(200);
       response.setMessage("success");
-    }catch(Exception e){
+    } catch (Exception e) {
       response.setCode(500);
       response.setMessage("error");
     }
     return response;
   }
 
-  public ApiResponseModel filterTicket(Long projectTypeId , String type , Long tagId){
+  public ApiResponseModel filterTicket(Long projectTypeId, String type, Long tagId) {
     ApiResponseModel response = new ApiResponseModel();
-    try{
-      List<ResTicket> all = ticketRepository.findAllByTypeAndWorkType(projectTypeId, type, tagId).stream().map(this::getTicket).collect(Collectors.toList());
+    try {
+      List<ResTicket> all =
+          ticketRepository.findAllByTypeAndWorkType(projectTypeId, type, tagId).stream()
+              .map(this::getTicket)
+              .collect(Collectors.toList());
       response.setCode(200);
       response.setMessage("success!");
       response.setData(all);
-    }catch(Exception e){
+    } catch (Exception e) {
       response.setCode(200);
       response.setMessage("success!");
     }
     return response;
   }
 
-  public ResTicket getTicket(Ticket ticket){
+  public ResTicket getTicket(Ticket ticket) {
     return new ResTicket(
-            ticket.getId(),
-            ticket.getWorkType(),
-            ticket.getText(),
-            ticket.getWorker()!=null ? new ResUser(
-                    ticket.getWorker().getId(),
-                    ticket.getWorker().getFirstname(),
-                    ticket.getWorker().getEmail(),
-                    ticket.getWorker()!=null? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
-                    ) : null,
-            ticket.getWorker()!=null ? new ResUser(
-                    ticket.getWorker().getId(),
-                    ticket.getWorker().getFirstname(),
-                    ticket.getWorker().getEmail(),
-                    ticket.getWorker()!=null? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
-            ) : null,
-            ticket.getWorker()!=null ? new ResUser(
-                    ticket.getWorker().getId(),
-                    ticket.getWorker().getFirstname(),
-                    ticket.getWorker().getEmail(),
-                    ticket.getWorker()!=null? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getWorker().getId().toString()).toUriString():null
-            ) : null,
-            ticket.getHoursWorker(),
-            ticket.getHoursTester(),
-            ticket.getProgramingLanguage()!=null ? new ResLanguage(
-                    ticket.getProgramingLanguage().getId(),
-                    ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getProgramingLanguage().getLogo().getId().toString()).toUriString(),
-                    ticket.getProgramingLanguage().getName()
-            ):null,
-            new ResCompleteQuestion(
-                    ticket.getCompleteQuestion().getId(),
-                    ticket.getCompleteQuestion().getQuestionPhoto()!=null?
-                            ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path( ticket.getCompleteQuestion().getQuestionPhoto().getId().toString()).toUriString():null,
-                    ticket.getCompleteQuestion().getText(),
-                    ticket.getCompleteQuestion().getLink()
-            ),
-            ticket.getTag()
-    );
+        ticket.getId(),
+        ticket.getWorkType(),
+        ticket.getText(),
+        ticket.getWorker() != null
+            ? new ResUser(
+                ticket.getWorker().getId(),
+                ticket.getWorker().getFirstname(),
+                ticket.getWorker().getEmail(),
+                ticket.getWorker() != null
+                    ? ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/attach/")
+                        .path(ticket.getWorker().getId().toString())
+                        .toUriString()
+                    : null)
+            : null,
+        ticket.getWorker() != null
+            ? new ResUser(
+                ticket.getWorker().getId(),
+                ticket.getWorker().getFirstname(),
+                ticket.getWorker().getEmail(),
+                ticket.getWorker() != null
+                    ? ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/attach/")
+                        .path(ticket.getWorker().getId().toString())
+                        .toUriString()
+                    : null)
+            : null,
+        ticket.getWorker() != null
+            ? new ResUser(
+                ticket.getWorker().getId(),
+                ticket.getWorker().getFirstname(),
+                ticket.getWorker().getEmail(),
+                ticket.getWorker() != null
+                    ? ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/attach/")
+                        .path(ticket.getWorker().getId().toString())
+                        .toUriString()
+                    : null)
+            : null,
+        ticket.getHoursWorker(),
+        ticket.getHoursTester(),
+        ticket.getProgramingLanguage() != null
+            ? new ResLanguage(
+                ticket.getProgramingLanguage().getId(),
+                ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/api/attach/")
+                    .path(ticket.getProgramingLanguage().getLogo().getId().toString())
+                    .toUriString(),
+                ticket.getProgramingLanguage().getName())
+            : null,
+        new ResCompleteQuestion(
+            ticket.getCompleteQuestion().getId(),
+            ticket.getCompleteQuestion().getQuestionPhoto() != null
+                ? ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/api/attach/")
+                    .path(ticket.getCompleteQuestion().getQuestionPhoto().getId().toString())
+                    .toUriString()
+                : null,
+            ticket.getCompleteQuestion().getText(),
+            ticket.getCompleteQuestion().getLink()),
+        ticket.getTag());
   }
 
-  public ApiResponseModel editTicket(ReqTicket reqTicket){
+  public ApiResponseModel editTicket(ReqTicket reqTicket) {
     ApiResponseModel response = new ApiResponseModel();
-    try{
+    try {
       Optional<Ticket> ticket = ticketRepository.findById(reqTicket.getId());
-      if(ticket.isPresent()){
-        if(reqTicket.getBoard()!=null){
+      if (ticket.isPresent()) {
+        if (reqTicket.getBoard() != null) {
           Optional<Board> board = boardRepository.findById(reqTicket.getBoard());
-          if(board.isPresent()){
+          if (board.isPresent()) {
             ticket.get().setBoard(board.get());
-          }else{
+          } else {
             response.setCode(207);
             response.setMessage("bunaqa idlik board mavjud emas!");
             return response;
           }
         }
-        if(reqTicket.getCompleteQuestion()!=null){
-          Optional<CompleteQuestion> question = completeQuestionRepository.findById(reqTicket.getCompleteQuestion());
-          if(question.isPresent()){
+        if (reqTicket.getCompleteQuestion() != null) {
+          Optional<CompleteQuestion> question =
+              completeQuestionRepository.findById(reqTicket.getCompleteQuestion());
+          if (question.isPresent()) {
             ticket.get().setCompleteQuestion(question.get());
-          }else{
+          } else {
             response.setCode(207);
             response.setMessage("bunaqa idlik complate question mavjud emas!");
             return response;
           }
         }
-        if(reqTicket.getHoursWorker()!=null){
+        if (reqTicket.getHoursWorker() != null) {
           ticket.get().setHoursWorker(reqTicket.getHoursWorker());
         }
-        if(reqTicket.getWorkerId()!=null){
+        if (reqTicket.getWorkerId() != null) {
           Optional<User> worker = userRepository.findById(reqTicket.getWorkerId());
-          if(worker.isPresent()){
+          if (worker.isPresent()) {
             ticket.get().setWorker(worker.get());
             ticket.get().setTicketCondition(TicketCondition.ATTACHED);
-          }else{
+          } else {
             response.setCode(207);
             response.setMessage("bunaqa idlik worker mavjud emas");
             return response;
           }
         }
-        if(reqTicket.getPmId()!=null){
+        if (reqTicket.getPmId() != null) {
           Optional<User> pm = userRepository.findById(reqTicket.getPmId());
-          if(pm.isPresent()){
+          if (pm.isPresent()) {
             ticket.get().setPm(pm.get());
-          }else{
+          } else {
             response.setCode(207);
             response.setMessage("bunaqa idlik ticket mavjud emas");
             return response;
           }
         }
-        if(reqTicket.getText()!=null){
+        if (reqTicket.getText() != null) {
           ticket.get().setText(reqTicket.getText());
         }
-        if(reqTicket.getWorkType()!=null){
+        if (reqTicket.getWorkType() != null) {
           ticket.get().setWorkType(reqTicket.getWorkType());
         }
-      }else{
+      } else {
         response.setCode(207);
         response.setMessage("bunaqa idlik ticket mavjud emas");
       }
-    }catch(Exception e){
+    } catch (Exception e) {
       response.setCode(500);
       response.setMessage("error");
     }

@@ -69,6 +69,6 @@ public class UserController {
   @ExceptionHandler
   @ResponseStatus(code = HttpStatus.BAD_REQUEST)
   public ApiResponseModel handleException(Exception e) {
-    return new ApiResponseModel(HttpStatus.BAD_REQUEST.value(), e.getMessage(), e.hashCode());
+    return new ApiResponseModel(HttpStatus.BAD_REQUEST.value(), e.getMessage(), e);
   }
 }

@@ -36,7 +36,7 @@ public class AuthController {
   // **************** REGISTER USER ****************//
   @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
   @PostMapping("/register")
-  public ApiResponseModel register(@Valid @RequestBody ReqSignUp reqSignUp) {
+  public ApiResponseModel register(@RequestBody @Valid ReqSignUp reqSignUp) {
     return authService.register(reqSignUp);
   }
 
