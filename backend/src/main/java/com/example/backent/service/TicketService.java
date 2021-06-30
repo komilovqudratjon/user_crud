@@ -18,6 +18,7 @@ public class TicketService {
 
   @Autowired TicketRepository ticketRepository;
 
+
   @Autowired UserRepository userRepository;
 
   @Autowired BoardRepository boardRepository;
