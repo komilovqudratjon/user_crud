@@ -3,7 +3,6 @@ package com.example.backent.service;
 import com.example.backent.entity.Agreement;
 import com.example.backent.entity.Company;
 import com.example.backent.entity.Project;
-import com.example.backent.entity.ProjectType;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqProject;
 import com.example.backent.payload.ResProject;
@@ -31,8 +30,6 @@ public class ProjectService {
     @Autowired
     TicketRepository ticketRepository;
 
-
-
     public ApiResponseModel addOrEditProject(ReqProject reqProject) {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
         Project project = new Project();
@@ -47,14 +44,6 @@ public class ProjectService {
                     return apiResponseModel;
                 }
             }
-//            Optional<ProjectType> type = typeRepository.findById(reqProject.getType());
-//            if (type.isPresent()){
-//                project.setType(type.get());
-//            }else {
-//                apiResponseModel.setCode(207);
-//                apiResponseModel.setMessage("bunaqa id lik type mavjud emas");
-//                return apiResponseModel;
-//            }
             Optional<Company> optionalCompany = companyRepository.findById(reqProject.getCompanyId());
             if (optionalCompany.isPresent()) {
                 project.setCompany(optionalCompany.get());
@@ -67,6 +56,7 @@ public class ProjectService {
             } else {
                 apiResponseModel.setCode(205);
                 apiResponseModel.setMessage("bunaqa idlik companiya mavjud emas");
+                return apiResponseModel;
             }
             apiResponseModel.setCode(200);
             apiResponseModel.setMessage("success !");
@@ -81,15 +71,25 @@ public class ProjectService {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
         List<Agreement> allById = null;
         try {
-            Optional<Project> optionalProject = projectRepository.findById(reqProject.getId());
+            Optional<Project> optionalProject = projectRepository.findById(reqProject.getCompanyId());
             if (optionalProject.isPresent()) {
                 if (reqProject.getAgreements() != null) {
                     try {
-                        allById = agreementRepository.findAllById(reqProject.getAgreements());
-                        optionalProject.get().setAgreementList(allById);
+                        for (int i = 0; i < reqProject.getAgreements().size(); i++) {
+                            Optional<Agreement> agreement = agreementRepository.findById(reqProject.getAgreements().get(i));
+                            if(agreement.isPresent()){
+                                optionalProject.get().getAgreementList().add(agreement.get());
+                            }else{
+                                apiResponseModel.setCode(207);
+                                apiResponseModel.setMessage("AGREEMENT ID : "+reqProject.getAgreements().get(i)+" not found");
+                                return apiResponseModel;
+                            }
+                        }
+                        optionalProject.get().getAgreementList().addAll(allById);
                     } catch (Exception e) {
                         apiResponseModel.setCode(500);
                         apiResponseModel.setMessage("error");
+                        return apiResponseModel;
                     }
                 }
                 if (reqProject.getCompanyId() != null) {
@@ -100,6 +100,7 @@ public class ProjectService {
             } else {
                 apiResponseModel.setCode(207);
                 apiResponseModel.setMessage("project id did not found");
+                return apiResponseModel;
             }
             apiResponseModel.setCode(200);
             apiResponseModel.setMessage("success");

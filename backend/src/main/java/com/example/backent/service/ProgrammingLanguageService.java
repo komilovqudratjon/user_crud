@@ -106,10 +106,7 @@ public class ProgrammingLanguageService {
   public ResLanguage getLanguage(ProgramingLanguage language) {
     return new ResLanguage(
         language.getId(),
-        ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/attach/")
-            .path(language.getLogo().getId().toString())
-            .toUriString(),
+        ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(language.getLogo().getId().toString()).toUriString(),
         language.getName());
   }
 }
