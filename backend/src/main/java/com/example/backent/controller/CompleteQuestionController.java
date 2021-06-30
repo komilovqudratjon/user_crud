@@ -27,4 +27,16 @@ public class CompleteQuestionController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/all")
+    public HttpEntity<?> getAll(){
+        ApiResponseModel response = service.getAllQuestions();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/one/{id}")
+    public HttpEntity<?> getOneQuestion(@PathVariable Long id){
+        ApiResponseModel response = service.getOne(id);
+        return ResponseEntity.ok(response);
+    }
+
 }

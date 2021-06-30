@@ -12,4 +12,6 @@ public class ReqBoard {
     private Long id;
     private String name;
     private Long project;
+    private String condition;
+    private Long index;
 }

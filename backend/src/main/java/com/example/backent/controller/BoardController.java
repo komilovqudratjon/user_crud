@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/board")
 public class BoardController {
+
     @Autowired
     BoardService boardService;
 
@@ -20,8 +21,8 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
-    public HttpEntity<?> akcem(@RequestBody ReqBoard reqBoard){
+    @PutMapping("/edit")
+    public HttpEntity<?> edit(@RequestBody ReqBoard reqBoard){
         ApiResponseModel response = boardService.editBoard(reqBoard);
         return ResponseEntity.ok(response);
     }
@@ -29,6 +30,12 @@ public class BoardController {
     @DeleteMapping("/{id}")
     public HttpEntity<?> deleteBoard(@PathVariable Long id){
         ApiResponseModel response = boardService.deleteBoard(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/all/{projectId}")
+    public HttpEntity<?> getBoards(@PathVariable Long projectId){
+        ApiResponseModel response = boardService.getByProject(projectId);
         return ResponseEntity.ok(response);
     }
 

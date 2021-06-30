@@ -43,9 +43,10 @@ public class AttachmentService {
                 attachment.setSize(file1.getSize());
                 attachment.setPath(file.getPath());
                 attachment.setAttachmentType(AttachmentType.valueOf(request.getParameter("type")));
-                attachmentRepository.save(attachment);
+                Attachment save = attachmentRepository.save(attachment);
                 response.setMessage("SUCCESS !");
                 response.setCode(200);
+                response.setData(save.getId());
             }catch(Exception e){
                 response.setMessage("error !");
                 response.setCode(500);
