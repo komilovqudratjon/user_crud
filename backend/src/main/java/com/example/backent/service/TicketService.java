@@ -50,9 +50,9 @@ public class TicketService {
       if (id != null) {
         return ticketRepository.getById(id);
       }
-      return new Ticket();
+      return null;
     } catch (Exception e) {
-      return new Ticket();
+      return null;
     }
   }
 
@@ -61,9 +61,9 @@ public class TicketService {
       if (id != null) {
         return programmingLanguageRepository.getById(id);
       }
-      return new ProgramingLanguage();
+      return null;
     } catch (Exception e) {
-      return new ProgramingLanguage();
+      return null;
     }
   }
 
@@ -72,9 +72,9 @@ public class TicketService {
       if (id != null) {
         return completeQuestionRepository.getById(id);
       }
-      return new CompleteQuestion();
+      return null;
     } catch (Exception e) {
-      return new CompleteQuestion();
+      return null;
     }
   }
 
@@ -83,9 +83,9 @@ public class TicketService {
       if (id != null) {
         return userRepository.getById(id);
       }
-      return new User();
+      return null;
     } catch (Exception e) {
-      return new User();
+      return null;
     }
   }
 
@@ -94,9 +94,9 @@ public class TicketService {
       if (id != null) {
         return boardRepository.getById(id);
       }
-      return new Board();
+      return null;
     } catch (Exception e) {
-      return new Board();
+      return null;
     }
   }
 

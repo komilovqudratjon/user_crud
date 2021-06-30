@@ -105,10 +105,45 @@ public class AuthService implements UserDetailsService {
   }
 
   public ApiResponseModel register(ReqSignUp reqSignUp) {
+
+    if (reqSignUp.getPassword() == null
+        || reqSignUp.getPassword().isEmpty()
+        || reqSignUp.getPassword().length() < 4) {
+      return new ApiResponseModel(
+          HttpStatus.CONFLICT.value(), "password number should not be null and length should be 4");
+    }
+    if (reqSignUp.getEmail() == null
+        || reqSignUp.getEmail().isEmpty()
+        || !reqSignUp.getEmail().contains("@")) {
+      return new ApiResponseModel(
+          HttpStatus.CONFLICT.value(), "have an @ sign in the email and not null");
+    }
+    if (reqSignUp.getMiddleName() == null || reqSignUp.getMiddleName().isEmpty()) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the middle name ");
+    }
+    if (reqSignUp.getFirstname() == null || reqSignUp.getFirstname().isEmpty()) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the firstname");
+    }
+    if (reqSignUp.getLastname() == null || reqSignUp.getLastname().isEmpty()) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the lastname");
+    }
+    if (reqSignUp.getPhoneNumber() == null || reqSignUp.getPhoneNumber().isEmpty()) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the phone number");
+    }
+    try {
+      Long.parseLong(reqSignUp.getPhoneNumber().replace("+", ""));
+    } catch (Exception e) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "phone number mus be number ");
+    }
     if (userRepository.existsByEmail(reqSignUp.getEmail())) {
       return new ApiResponseModel(HttpStatus.CONFLICT.value(), "this email is busy");
     }
-
+    if (userRepository.existsByPhoneNumber(reqSignUp.getPhoneNumber())) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "phone number is buys");
+    }
+    if (userRepository.existsByPassportNumber(reqSignUp.getPhoneNumber())) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "passport  is buys");
+    }
     userRepository.save(
         new User(
             reqSignUp.getFirstname(),

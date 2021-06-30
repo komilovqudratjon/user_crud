@@ -19,16 +19,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
-    @Autowired
-    ProjectRepository projectRepository;
-    @Autowired
-    CompanyRepository companyRepository;
-    @Autowired
-    AgreementRepository agreementRepository;
-    @Autowired
-    ProjectTypeRepository typeRepository;
-    @Autowired
-    TicketRepository ticketRepository;
+  @Autowired ProjectRepository projectRepository;
+
+  @Autowired CompanyRepository companyRepository;
+
+    @Autowired AgreementRepository agreementRepository;
+
+    @Autowired TicketRepository ticketRepository;
 
     public ApiResponseModel addOrEditProject(ReqProject reqProject) {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
@@ -183,5 +180,8 @@ public class ProjectService {
         return response;
     }
 
+  public ApiResponseModel allProjectsStatus() {
 
+    return null;
+  }
 }

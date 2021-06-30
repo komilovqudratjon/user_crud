@@ -12,37 +12,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/project")
 public class ProjectController {
 
-    @Autowired
-    ProjectService projectService;
+  @Autowired ProjectService projectService;
 
-    @PostMapping
-    public HttpEntity<?> addProject(@RequestBody ReqProject reqProject){
-        ApiResponseModel response = projectService.addOrEditProject(reqProject);
-        return ResponseEntity.ok(response);
-    }
+  @PostMapping
+  public HttpEntity<?> addProject(@RequestBody ReqProject reqProject) {
+    ApiResponseModel response = projectService.addOrEditProject(reqProject);
+    return ResponseEntity.ok(response);
+  }
 
-    @PutMapping
-    public HttpEntity<?> editProject(@RequestBody ReqProject reqProject){
-        ApiResponseModel response = projectService.editAgreementAndCompany(reqProject);
-        return ResponseEntity.ok(response);
-    }
+  @PutMapping
+  public HttpEntity<?> editProject(@RequestBody ReqProject reqProject) {
+    ApiResponseModel response = projectService.editAgreementAndCompany(reqProject);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/all")
-    public HttpEntity<?> getAll(){
-        ApiResponseModel response = projectService.getAllProjects();
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/all")
+  public HttpEntity<?> getAll() {
+    ApiResponseModel response = projectService.getAllProjects();
+    return ResponseEntity.ok(response);
+  }
 
-    @DeleteMapping("/{id}")
-    public HttpEntity<?> deleteAll(@PathVariable Long id){
-        ApiResponseModel response = projectService.delete(id);
-        return ResponseEntity.ok(response);
-    }
+  @DeleteMapping("/{id}")
+  public HttpEntity<?> deleteAll(@PathVariable Long id) {
+    ApiResponseModel response = projectService.delete(id);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/process/{id}")
-    public HttpEntity<?> getProcess(@PathVariable Long id){
-        ApiResponseModel response = projectService.projectCondition(id);
-        return ResponseEntity.ok(response);
-    }
-
+  @GetMapping("/process/{id}")
+  public HttpEntity<?> getProcess(@PathVariable Long id) {
+    ApiResponseModel response = projectService.projectCondition(id);
+    return ResponseEntity.ok(response);
+  }
 }
