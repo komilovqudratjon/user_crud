@@ -14,12 +14,12 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query(value = "select * from ticket where project_type_id =:id and work_type=:type and tag_id=:tagId",nativeQuery = true)
     List<Ticket> findAllByTypeAndWorkType(@Param("id") Long id,@Param("type") String type,@Param("tagId") Long tagId);
 
-    @Query(value = "select * from ticket where board_id in (select board.id from board where project_id in (select project.id from project where project.id=:id)) and ticket_condition='CREATED'",nativeQuery = true)
-    List<Ticket> backlog(@Param("id") Long id);
+    @Query(value = "select * from ticket where board_id in (select board.id from board where condition= :condition and project_id in (:id))",nativeQuery = true)
+    List<Ticket> selectByConditionAndProjectId(@Param("id") Long id,@Param("condition") String condition);
 
-    @Query(value = "select count(hours_worker) from ticket where board_id in (select board.id from board where board_condition='DONE' and project_id in (select project.id from project where project.id=:id))",nativeQuery = true)
+    @Query(value = "select sum(hours_worker) from ticket where board_id in (select board.id from board where board.condition='DONE' and project_id in (:id))",nativeQuery = true)
     Long findDoneTicket(@Param("id") Long id);
 
-    @Query(value = "select count(hours_worker) from ticket where board_id in (select board.id from board where project_id in (select project.id from project where project.id=:id))",nativeQuery = true)
+    @Query(value = "select count(hours_worker) from ticket where board_id in (select board.id from board where project_id in (:id))",nativeQuery = true)
     Long allTicketByProject(@Param("id") Long id);
 }

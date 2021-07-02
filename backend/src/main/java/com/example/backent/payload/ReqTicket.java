@@ -1,5 +1,6 @@
 package com.example.backent.payload;
 
+import com.example.backent.entity.ProjectType;
 import com.example.backent.entity.enums.WorkType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,4 +22,5 @@ public class ReqTicket {
   private Long programingLanguage;
   private Long completeQuestion;
   private Boolean deleted;
+  private Long type;
 }

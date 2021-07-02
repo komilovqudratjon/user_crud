@@ -36,7 +36,13 @@ public class BoardService {
             Board board = new Board();
             board.setName(reqBoard.getName());
             board.setIndex(reqBoard.getIndex());
-            board.setCondition(BoardCondition.valueOf(reqBoard.getCondition()));
+            if(reqBoard.getCondition()!=null){
+                board.setCondition(BoardCondition.valueOf(reqBoard.getCondition()));
+            }else{
+                response.setMessage("ENTER CONDITION  !");
+                response.setCode(207);
+                return response;
+            }
             Optional<Project> project = projectRepository.findById(reqBoard.getProject());
             if(project.isPresent()){
                 board.setProject(project.get());

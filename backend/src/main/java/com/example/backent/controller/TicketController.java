@@ -28,8 +28,14 @@ public class TicketController {
   }
 
   @GetMapping("/backlog")
-  public HttpEntity<?> backlog(@RequestParam("id") Long id){
-    ApiResponseModel response = ticketService.backLock(id);
+  public HttpEntity<?> backlog(@RequestParam Long projectId,@RequestParam String condition){
+    ApiResponseModel response = ticketService.backLock(projectId,condition);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/{id}")
+  public HttpEntity<?> editTicket(@PathVariable Long id){
+    ApiResponseModel response = ticketService.getTicket(id);
     return ResponseEntity.ok(response);
   }
 
