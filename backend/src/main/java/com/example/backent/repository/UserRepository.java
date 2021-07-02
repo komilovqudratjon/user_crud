@@ -3,6 +3,8 @@ package com.example.backent.repository;
 import com.example.backent.entity.Role;
 import com.example.backent.entity.User;
 import com.example.backent.entity.enums.RoleName;
+import com.example.backent.payload.ResUser;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,9 +34,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
           String email,
           String address);
 
-  boolean existsByEmail(String phoneNumber);
+  Page<User> findAllByDeleted(boolean deleted, Pageable pageable);
+
+  boolean existsByEmail(String email);
+
+  boolean existsByEmailAndIdNot(String email, Long id);
 
   boolean existsByPassportNumber(String passportNumber);
 
+  boolean existsByPassportNumberAndIdNot(String passportNumber, Long id);
+
   boolean existsByPhoneNumber(String phoneNumber);
+
+  boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long id);
 }

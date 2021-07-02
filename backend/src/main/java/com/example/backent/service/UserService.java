@@ -2,13 +2,27 @@ package com.example.backent.service;
 
 import com.example.backent.entity.FieldsForUsers;
 import com.example.backent.entity.UsersLanguage;
+import com.example.backent.exception.ResourceException;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqIdAndName;
+import com.example.backent.payload.ReqUser;
 import com.example.backent.repository.*;
 import com.example.backent.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -104,7 +118,7 @@ public class UserService {
     }
   }
 
-  public Object getAllUsers(Integer page, Integer size, String search) {
+  public List<ReqUser> getAllUsers(Integer page, Integer size, String search) {
     try {
       return userRepository
           .findAllByLastnameContainingOrMiddlenameContainingOrFirstnameContainingOrPhoneNumberContainingOrPassportNumberContainingOrEmailContainingOrAddressContaining(
@@ -115,9 +129,88 @@ public class UserService {
               search,
               search,
               search,
-              search);
+              search)
+          .stream()
+          .map(
+              user ->
+                  new ReqUser(
+                      user.getId(),
+                      user.getFirstname(),
+                      user.getLastname(),
+                      user.getMiddlename(),
+                      user.getAddress(),
+                      user.getWorkTimeType(),
+                      user.getFamily(),
+                      user.getPassportNumber(),
+                      user.getDateOfBirth(),
+                      user.getStartWorkingTime(),
+                      user.getPhoneNumber(),
+                      user.getEmail(),
+                      user.getFields(),
+                      user.getExperiences(),
+                      user.getLanguages(),
+                      user.getProgramingLanguages(),
+                      user.getAvatar() == null
+                          ? null
+                          : ServletUriComponentsBuilder.fromCurrentContextPath()
+                              .path("/api/attach/")
+                              .path(user.getAvatar().getId().toString())
+                              .toUriString(),
+                      user.getRoles()))
+          .collect(Collectors.toList());
     } catch (Exception e) {
       return null;
     }
+  }
+
+  public HttpEntity<?> getPageable(
+      Optional<Integer> page,
+      Optional<Integer> size,
+      Optional<String> sortBy,
+      UriComponentsBuilder uriBuilder,
+      HttpServletResponse response)
+      throws IOException {
+    System.err.println(uriBuilder.toUriString());
+    System.err.println(response.getOutputStream());
+    return ResponseEntity.status(HttpStatus.ACCEPTED)
+        .body(
+            new ApiResponseModel(
+                HttpStatus.OK.value(),
+                "users",
+                userRepository.findAllByDeleted(
+                    false,
+                    PageRequest.of(
+                        page.orElse(0), size.orElse(5), Sort.Direction.ASC, sortBy.orElse("id")))
+                //                    .stream()
+                //                    .map(
+                //                        user ->
+                //                            new ReqUser(
+                //                                user.getId(),
+                //                                user.getFirstname(),
+                //                                user.getLastname(),
+                //                                user.getMiddlename(),
+                //                                user.getAddress(),
+                //                                user.getWorkTimeType(),
+                //                                user.getFamily(),
+                //                                user.getPassportNumber(),
+                //                                user.getDateOfBirth(),
+                //                                user.getStartWorkingTime(),
+                //                                user.getPhoneNumber(),
+                //                                user.getEmail(),
+                //                                user.getFields(),
+                //                                user.getExperiences(),
+                //                                user.getLanguages(),
+                //                                user.getProgramingLanguages(),
+                //                                user.getAvatar() == null
+                //                                    ? null
+                //                                    :
+                // ServletUriComponentsBuilder.fromCurrentContextPath()
+                //                                        .path("/api/attach/")
+                //                                        .path(user.getAvatar().getId().toString())
+                //                                        .toUriString(),
+                //                                user.getRoles()))
+                //                    .collect(Collectors.toList()
+                //                    )
+                ));
   }
 }

@@ -1,7 +1,7 @@
 package com.example.backent.controller;
 
-import com.example.backent.entity.enums.RoleName;
 import com.example.backent.payload.ApiResponseModel;
+import com.example.backent.payload.ReqUser;
 import com.example.backent.service.UserService;
 import com.example.backent.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +9,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.sql.Timestamp;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
@@ -23,7 +26,6 @@ public class UserController {
   // **************** SAVE LANGUAGE ****************//
   @PostMapping("/language/{language}")
   public ApiResponseModel saveLanguage(@PathVariable String language) {
-    System.out.println(language);
     return userService.saveLanguage(language);
   }
 
@@ -59,11 +61,22 @@ public class UserController {
 
   // **************  GET USER  ****************//
   @GetMapping("/users")
-  public Object getUsers(
+  public List<ReqUser> getUsers(
       @RequestParam(name = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
       @RequestParam(name = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
       @RequestParam(name = "search", defaultValue = "all") String search) {
     return userService.getAllUsers(page, size, search);
+  }
+
+  @GetMapping(params = {"sortBy", "page", "size"})
+  public HttpEntity<?> findPaginated(
+      @RequestParam("page") Optional<Integer> page,
+      @RequestParam("size") Optional<Integer> size,
+      @RequestParam("sortBy") Optional<String> sortBy,
+      UriComponentsBuilder uriBuilder,
+      HttpServletResponse response)
+      throws IOException {
+    return userService.getPageable(page, size, sortBy, uriBuilder, response);
   }
 
   @ExceptionHandler

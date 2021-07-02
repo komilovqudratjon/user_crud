@@ -2,6 +2,7 @@ package com.example.backent.entity;
 
 import com.example.backent.entity.enums.TimeType;
 import com.example.backent.entity.template.AbsEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

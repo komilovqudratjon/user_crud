@@ -11,18 +11,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "users")
-@XmlRootElement
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,13 +55,14 @@ public class User extends AbsEntity implements UserDetails {
   @ManyToMany
   private List<FieldsForUsers> fields; // REQUIRED
 
-  @ManyToMany private List<UserExperience> experiences; // REQUIRED
+  @ManyToMany private List<UserExperience> experiences;
 
-  @ManyToMany private List<UsersLanguage> languages; // REQUIRED
+  @ManyToMany private List<UsersLanguage> languages;
 
   @ManyToMany private List<ProgramingLanguage> programingLanguages;
 
   @Column(nullable = false)
+  @Transient
   private String password; // REQUIRED
 
   @OneToOne(fetch = FetchType.LAZY)
@@ -125,10 +120,10 @@ public class User extends AbsEntity implements UserDetails {
       inverseJoinColumns = {@JoinColumn(name = "role_id")})
   private List<Role> roles;
 
-  private boolean accountNonExpired = true;
-  private boolean accountNonLocked = true;
-  private boolean credentialsNonExpired = true;
-  private boolean enabled = true;
+  @Transient private boolean accountNonExpired = true;
+  @Transient private boolean accountNonLocked = true;
+  @Transient private boolean credentialsNonExpired = true;
+  @Transient private boolean enabled = true;
 
   public User(String email, String password, String firstname, String lastname, List<Role> roles) {
     this.email = email;
