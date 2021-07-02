@@ -18,7 +18,6 @@ public class TicketService {
 
   @Autowired TicketRepository ticketRepository;
 
-
   @Autowired UserRepository userRepository;
 
   @Autowired BoardRepository boardRepository;
@@ -29,8 +28,10 @@ public class TicketService {
 
   @Autowired ProjectRepository projectRepository;
 
+  @Autowired ProjectTypeRepository projectTypeRepository;
+
   public ApiResponseModel addOrEditTicket(ReqTicket reqTicket) {
-    Ticket ticket = getTicket(reqTicket.getId());
+    Ticket ticket = new Ticket();
     ticket.setWorkType(reqTicket.getWorkType());
     ticket.setText(reqTicket.getText());
     ticket.setTicketCondition(TicketCondition.CREATED);
@@ -43,18 +44,26 @@ public class TicketService {
     ticket.setProgramingLanguage(getProgramingLanguage(reqTicket.getProgramingLanguage()));
     ticket.setCompleteQuestion(getCompleteQuestion(ticket.getId()));
     ticketRepository.save(ticket);
-    return new ApiResponseModel();
+    return new ApiResponseModel(200,"success");
   }
 
-  public Ticket getTicket(Long id) {
+  public ApiResponseModel getTicket(Long id) {
+    ApiResponseModel response = new ApiResponseModel();
     try {
-      if (id != null) {
-        return ticketRepository.getById(id);
+      Optional<Ticket> ticket = ticketRepository.findById(id);
+      if (ticket.isPresent()) {
+        response.setData(getTicket(ticket.get()));
+        response.setCode(200);
+        response.setMessage("success");
+      } else {
+        response.setCode(207);
+        response.setMessage("id did not found");
       }
-      return null;
     } catch (Exception e) {
-      return null;
+     response.setCode(500);
+     response.setMessage("error");
     }
+    return response;
   }
 
   public ProgramingLanguage getProgramingLanguage(Long id) {
@@ -102,18 +111,29 @@ public class TicketService {
   }
 
   public ApiResponseModel deleteTicket(Long id) {
+    ApiResponseModel response = new ApiResponseModel();
     try {
-      ticketRepository.deleteById(id);
-      return new ApiResponseModel(HttpStatus.OK.value(), "delete");
+      Optional<Ticket> ticket = ticketRepository.findById(id);
+      if(ticket.isPresent()){
+        ticket.get().setDeleted(true);
+        ticketRepository.save(ticket.get());
+        response.setCode(200);
+        response.setMessage("success");
+      }else{
+        response.setCode(207);
+        response.setMessage("id did not found");
+      }
     } catch (Exception e) {
-      return new ApiResponseModel(HttpStatus.CONTINUE.value(), "not delete");
+      response.setCode(500);
+      response.setMessage("error");
     }
+    return response;
   }
 
-  public ApiResponseModel backLock(Long projectId){
+  public ApiResponseModel backLock(Long projectId , String condition){
     ApiResponseModel response= new ApiResponseModel();
     try{
-      List<ResTicket> backlog = ticketRepository.backlog(projectId).stream().map(this::getTicket).collect(Collectors.toList());
+      List<ResTicket> backlog = ticketRepository.selectByConditionAndProjectId(projectId,condition).stream().map(this::getTicket).collect(Collectors.toList());
       response.setData(backlog);
       response.setCode(200);
       response.setMessage("success");
@@ -172,13 +192,13 @@ public class TicketService {
                             ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(ticket.getProgramingLanguage().getLogo().getId().toString()).toUriString():null,
                     ticket.getProgramingLanguage().getName()
             ):null,
-            new ResCompleteQuestion(
+            ticket.getCompleteQuestion()!=null?new ResCompleteQuestion(
                     ticket.getCompleteQuestion().getId(),
                     ticket.getCompleteQuestion().getQuestionPhoto()!=null?
                             ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path( ticket.getCompleteQuestion().getQuestionPhoto().getId().toString()).toUriString():null,
                     ticket.getCompleteQuestion().getText(),
                     ticket.getCompleteQuestion().getLink()
-            ),
+            ):null,
             ticket.getTag()
     );
   }
@@ -186,12 +206,23 @@ public class TicketService {
   public ApiResponseModel editTicket(ReqTicket reqTicket){
     ApiResponseModel response = new ApiResponseModel();
     try{
+      if(reqTicket.getId()==null){
+        response.setCode(207);
+        response.setMessage("ENTER ID OF TICKET");
+        return response;
+      }
       Optional<Ticket> ticket = ticketRepository.findById(reqTicket.getId());
       if(ticket.isPresent()){
         if(reqTicket.getBoard()!=null){
           Optional<Board> board = boardRepository.findById(reqTicket.getBoard());
           if(board.isPresent()){
             ticket.get().setBoard(board.get());
+//            if(board.get().getCondition().name()=="DONE"){
+//              ticket.get().setTicketCondition(TicketCondition.valueOf("DONE"));
+//            }
+//            if(board.get().getCondition().name()=="PROCESS"){
+//              ticket.get().setTicketCondition(TicketCondition.valueOf("DONE"));
+//            }
           }else{
             response.setCode(207);
             response.setMessage("bunaqa idlik board mavjud emas!");
@@ -201,6 +232,7 @@ public class TicketService {
         if(reqTicket.getCompleteQuestion()!=null){
           Optional<CompleteQuestion> question = completeQuestionRepository.findById(reqTicket.getCompleteQuestion());
           if(question.isPresent()){
+            System.out.println(question.get());
             ticket.get().setCompleteQuestion(question.get());
           }else{
             response.setCode(207);
@@ -228,9 +260,22 @@ public class TicketService {
             ticket.get().setPm(pm.get());
           }else{
             response.setCode(207);
-            response.setMessage("bunaqa idlik ticket mavjud emas");
+            response.setMessage("bunaqa idlik user mavjud emas");
             return response;
           }
+        }
+        if(reqTicket.getTesterId()!=null){
+          Optional<User> tester = userRepository.findById(reqTicket.getTesterId());
+          if(tester.isPresent()){
+            ticket.get().setTester(tester.get());
+          }else{
+            response.setCode(207);
+            response.setMessage("bunaqa idlik ue mavjud emas");
+            return response;
+          }
+        }
+        if(reqTicket.getHoursTester()!=null){
+          ticket.get().setHoursTester(reqTicket.getHoursTester());
         }
         if(reqTicket.getText()!=null){
           ticket.get().setText(reqTicket.getText());
@@ -238,6 +283,19 @@ public class TicketService {
         if(reqTicket.getWorkType()!=null){
           ticket.get().setWorkType(reqTicket.getWorkType());
         }
+        if(reqTicket.getType()!=null){
+          Optional<ProjectType> type = projectTypeRepository.findById(reqTicket.getType());
+          if(type.isPresent()){
+            ticket.get().setProjectType(type.get());
+          }else{
+            response.setCode(207);
+            response.setMessage("bunaqa idlik type mavjud emas");
+            return response;
+          }
+        }
+        ticketRepository.save(ticket.get());
+        response.setCode(200);
+        response.setMessage("success");
       }else{
         response.setCode(207);
         response.setMessage("bunaqa idlik ticket mavjud emas");
