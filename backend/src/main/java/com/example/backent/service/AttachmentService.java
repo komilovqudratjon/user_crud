@@ -5,6 +5,7 @@ import com.example.backent.entity.enums.AttachmentType;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ import java.util.*;
 @Service
 public class AttachmentService {
 
-  @Autowired AttachmentRepository attachmentRepository;
+    @Autowired
+    AttachmentRepository attachmentRepository;
 
   public ApiResponseModel uploadFile(MultipartHttpServletRequest request) {
     ApiResponseModel response = new ApiResponseModel();

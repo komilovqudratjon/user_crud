@@ -1,14 +1,18 @@
 package com.example.backent.service;
 
+import com.example.backent.entity.Agreement;
 import com.example.backent.entity.Company;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ReqCompany;
+import com.example.backent.payload.ResAgreement;
+import com.example.backent.payload.ResCompany;
 import com.example.backent.repository.AgreementRepository;
 import com.example.backent.repository.AttachmentRepository;
 import com.example.backent.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +36,6 @@ public class CompanyService {
           company = optionalCompany.get();
         }
       }
-
       if (!companyRepository.existsByName(reqCompany.getName())) {
         company.setName(reqCompany.getName());
         company.setResponsiblePerson(reqCompany.getResponsiblePerson());
@@ -43,15 +46,18 @@ public class CompanyService {
         company.setPhoneNumber(reqCompany.getPhoneNumber());
         company.setEmail(reqCompany.getEmail());
         company.setAddress(reqCompany.getAddress());
-        company.setAgreement(
-            Stream.concat(
-                    company.getAgreement().stream(),
-                    agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
-                .collect(Collectors.toList()));
-      } else {
-        apiResponseModel.setCode(HttpStatus.MULTI_STATUS.value());
-        apiResponseModel.setMessage("bunaqa nomli comoany mavjud !");
-        return apiResponseModel;
+        if (reqCompany.getDeleteFile() != null) {
+          company.setAgreement(
+                  Stream.concat(
+                          company.getAgreement().stream(),
+                          agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
+                          .collect(Collectors.toList()));
+        }
+//        else {
+//          apiResponseModel.setCode(HttpStatus.MULTI_STATUS.value());
+//          apiResponseModel.setMessage("bunaqa nomli company mavjud !");
+//          return apiResponseModel;
+//        }
       }
       companyRepository.save(company);
       apiResponseModel.setCode(HttpStatus.OK.value());
@@ -89,7 +95,7 @@ public class CompanyService {
   public ApiResponseModel getAllCompany() {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      List<Company> companyList = companyRepository.findAllByDeleted(false);
+      List<ResCompany> companyList = companyRepository.findAllByDeleted(false).stream().map(this::getCompany).collect(Collectors.toList());
       response.setCode(HttpStatus.OK.value());
       response.setMessage("success");
       response.setData(companyList);
@@ -103,10 +109,9 @@ public class CompanyService {
   public ApiResponseModel getOneCompany(Long companyId) {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      Optional<Company> optionalCompany =
-          Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
+      Optional<Company> optionalCompany = Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
       if (optionalCompany.isPresent()) {
-        response.setData(optionalCompany);
+        response.setData(getCompany(optionalCompany.get()));
         response.setCode(HttpStatus.OK.value());
         response.setMessage("success");
       } else {
@@ -119,4 +124,29 @@ public class CompanyService {
     }
     return response;
   }
+
+  public ResCompany getCompany(Company company){
+    return new ResCompany(
+            company.getId(),
+            company.getName(),
+            company.getResponsiblePerson(),
+            company.getBalance(),
+            company.getOked(),
+            company.getMfo(),
+            company.getStir(),
+            company.getPhoneNumber(),
+            company.getEmail(),
+            company.getAddress(),
+            company.getAgreement()!=null?company.getAgreement().stream().map(this::getAgreement).collect(Collectors.toList()):null
+    );
+  }
+
+  public ResAgreement getAgreement(Agreement agreement){
+    return new ResAgreement(
+            agreement.getId(),
+            agreement.getWhy(),
+            agreement.getAFile()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(agreement.getAFile().getId().toString()).toUriString():null
+    );
+  }
+
 }
