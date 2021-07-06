@@ -11,10 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 public class ResProjectCondition {
     private Long id;
-    private Long backend;
-    private Long frontend;
+    private Double backend;
+    private Double frontend;
 //    private Long webfront;
-    private Long design;
+    private Double design;
     private Long tz;
     private String startDate;
     private String endDate;

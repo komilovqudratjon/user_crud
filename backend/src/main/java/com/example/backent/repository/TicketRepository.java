@@ -26,10 +26,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query(value = "select count(hours_worker) from ticket where board_id in (select board.id from board where project_id in (:id))",nativeQuery = true)
     Long allTicketByProject(@Param("id") Long id);
 
-    @Query(value = "select count(hours_worker) from ticket where work_type=:type and board_id in (select board.id from board where project_id in (:id))",nativeQuery = true)
-    Long countAllTicketByWorkType(@Param("type") String type,@Param("id") Long id);
+    @Query(value = "select sum(hours_worker) from ticket where work_type=:type and board_id in (select board.id from board where project_id in (:id))",nativeQuery = true)
+    Double countAllTicketByWorkType(@Param("type") String type,@Param("id") Long id);
 
-    @Query(value = "select count(hours_worker) from ticket where work_type=:type and board_id in (select board.id from board where project_id in (:id) and condition='DONE')",nativeQuery = true)
-    Long countDoneTicketByWorkType(@Param("type") String type,@Param("id") Long id);
+    @Query(value = "select sum(hours_worker) from ticket where work_type=:type and board_id in (select board.id from board where project_id in (:id) and condition='DONE')",nativeQuery = true)
+    Double countDoneTicketByWorkType(@Param("type") String type,@Param("id") Long id);
 
 }
