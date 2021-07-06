@@ -1,17 +1,14 @@
 package com.example.backent.controller;
 
-import com.example.backent.entity.enums.RoleName;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.service.UserService;
-import com.example.backent.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
@@ -23,7 +20,6 @@ public class UserController {
   // **************** SAVE LANGUAGE ****************//
   @PostMapping("/language/{language}")
   public ApiResponseModel saveLanguage(@PathVariable String language) {
-    System.out.println(language);
     return userService.saveLanguage(language);
   }
 
@@ -58,17 +54,17 @@ public class UserController {
   }
 
   // **************  GET USER  ****************//
-  @GetMapping("/users")
-  public Object getUsers(
-      @RequestParam(name = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-      @RequestParam(name = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-      @RequestParam(name = "search", defaultValue = "all") String search) {
-    return userService.getAllUsers(page, size, search);
+  @GetMapping(params = {"sortBy", "page", "size"})
+  public HttpEntity<?> findPaginated(
+      @RequestParam("page") Optional<Integer> page,
+      @RequestParam("size") Optional<Integer> size,
+      @RequestParam("sortBy") Optional<String> sortBy) {
+    return userService.getPageable(page, size, sortBy);
   }
 
   @ExceptionHandler
   @ResponseStatus(code = HttpStatus.BAD_REQUEST)
   public ApiResponseModel handleException(Exception e) {
-    return new ApiResponseModel(HttpStatus.BAD_REQUEST.value(), e.getMessage(), e);
+    return new ApiResponseModel(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
   }
 }

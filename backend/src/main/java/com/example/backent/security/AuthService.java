@@ -2,19 +2,16 @@ package com.example.backent.security;
 
 import com.example.backent.entity.Attachment;
 import com.example.backent.entity.User;
-import com.example.backent.payload.ApiResponseModel;
-import com.example.backent.payload.JwtResponse;
-import com.example.backent.payload.ReqSignUp;
-import com.example.backent.payload.ResUploadFile;
+import com.example.backent.entity.enums.AttachmentType;
+import com.example.backent.exception.ResourceException;
+import com.example.backent.payload.*;
 import com.example.backent.repository.*;
 import com.example.backent.service.MailService;
-import freemarker.template.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,20 +23,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService implements UserDetailsService {
+
   private final UserRepository userRepository;
 
   private final PasswordEncoder passwordEncoder;
 
   private final RoleRepository roleRepository;
+
+  @Value("${upload.folder}")
+  private String path;
 
   @Value("${spring.mail.password}")
   private String mailPassword;
@@ -104,67 +106,121 @@ public class AuthService implements UserDetailsService {
     return user.isDeleted() ? null : user;
   }
 
-  public ApiResponseModel register(ReqSignUp reqSignUp) {
+  public HttpEntity<?> register(ReqSignUp reqSignUp) throws ParseException {
 
-    if (reqSignUp.getPassword() == null
-        || reqSignUp.getPassword().isEmpty()
-        || reqSignUp.getPassword().length() < 4) {
-      return new ApiResponseModel(
-          HttpStatus.CONFLICT.value(), "password number should not be null and length should be 4");
+    User user = new User();
+
+    String info = "";
+
+    if (reqSignUp.getId() == null) {
+      if (userRepository.existsByEmail(reqSignUp.getEmail())) {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(),
+                    "field",
+                    List.of(new ErrorsField("email", "this email is busy"))));
+      }
+      if (userRepository.existsByPhoneNumber(reqSignUp.getPhoneNumber())) {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(),
+                    "field",
+                    List.of(new ErrorsField("phoneNumber", "this phoneNumber is busy"))));
+      }
+      if (userRepository.existsByPassportNumber(reqSignUp.getPassportNumber())) {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(),
+                    "field",
+                    List.of(new ErrorsField("passportNumber", "this passportNumber is busy"))));
+      }
+      user =
+          new User(
+              reqSignUp.getFirstname().substring(0, 1).toUpperCase()
+                  + reqSignUp.getFirstname().substring(1),
+              reqSignUp.getLastname().substring(0, 1).toUpperCase()
+                  + reqSignUp.getLastname().substring(1),
+              reqSignUp.getMiddleName(),
+              reqSignUp.getAddress(),
+              reqSignUp.getWorkTimeType(),
+              reqSignUp.getFamily(),
+              reqSignUp.getPassportNumber(),
+              new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getDateOfBirth()),
+              new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getStartWorkingTime()),
+              reqSignUp.getPhoneNumber(),
+              reqSignUp.getEmail(),
+              userFieldsRepository.findAllByIdIn(reqSignUp.getFields()),
+              userExperiencesRepository.saveAll(reqSignUp.getExperiences()),
+              usersLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
+              programmingLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
+              passwordEncoder.encode(reqSignUp.getPassword()),
+              reqSignUp.isActive(),
+              roleRepository.findAllByNameIn(reqSignUp.getRoles()),
+              reqSignUp.getPhotoId() == null
+                  ? null
+                  : attachmentRepository.findById(reqSignUp.getPhotoId()).orElse(null));
+      info = "create";
+    } else {
+      Optional<User> userOptional = userRepository.findById(reqSignUp.getId());
+      if (userOptional.isPresent()) {
+        if (userRepository.existsByEmailAndIdNot(reqSignUp.getEmail(), reqSignUp.getId())) {
+          return ResponseEntity.badRequest()
+              .body(
+                  new ApiResponseModel(
+                      HttpStatus.CONFLICT.value(),
+                      "field",
+                      List.of(new ErrorsField("email", "this email is busy"))));
+        }
+        if (userRepository.existsByPhoneNumberAndIdNot(
+            reqSignUp.getPhoneNumber(), reqSignUp.getId())) {
+          return ResponseEntity.badRequest()
+              .body(
+                  new ApiResponseModel(
+                      HttpStatus.CONFLICT.value(),
+                      "field",
+                      List.of(new ErrorsField("phoneNumber", "this phoneNumber is busy"))));
+        }
+        if (userRepository.existsByPassportNumberAndIdNot(
+            reqSignUp.getPassportNumber(), reqSignUp.getId())) {
+          return ResponseEntity.badRequest()
+              .body(
+                  new ApiResponseModel(
+                      HttpStatus.CONFLICT.value(),
+                      "field",
+                      List.of(new ErrorsField("passportNumber", "this passportNumber is busy"))));
+        }
+        user = userOptional.get();
+        user.setFirstname(
+            reqSignUp.getFirstname().substring(0, 1).toUpperCase()
+                + reqSignUp.getFirstname().substring(1));
+        user.setLastname(
+            reqSignUp.getLastname().substring(0, 1).toUpperCase()
+                + reqSignUp.getLastname().substring(1));
+        user.setMiddlename(reqSignUp.getMiddleName());
+        user.setAddress(reqSignUp.getAddress());
+        user.setWorkTimeType(reqSignUp.getWorkTimeType());
+        user.setFamily(reqSignUp.getFamily());
+        user.setPassportNumber(reqSignUp.getPassportNumber());
+        user.setDateOfBirth(new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getDateOfBirth()));
+        user.setStartWorkingTime(
+            new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getStartWorkingTime()));
+        user.setPhoneNumber(reqSignUp.getPhoneNumber());
+        user.setEmail(reqSignUp.getEmail());
+        user.setActive(reqSignUp.isActive());
+        user.setAvatar(
+            reqSignUp.getPhotoId() == null
+                ? null
+                : attachmentRepository.findById(reqSignUp.getPhotoId()).orElse(null));
+      } else {
+        return ResponseEntity.badRequest()
+            .body(new ResourceException(HttpStatus.CONFLICT.value(), "not found this id", null));
+      }
+      info = "edit";
     }
-    if (reqSignUp.getEmail() == null
-        || reqSignUp.getEmail().isEmpty()
-        || !reqSignUp.getEmail().contains("@")) {
-      return new ApiResponseModel(
-          HttpStatus.CONFLICT.value(), "have an @ sign in the email and not null");
-    }
-    if (reqSignUp.getMiddleName() == null || reqSignUp.getMiddleName().isEmpty()) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the middle name ");
-    }
-    if (reqSignUp.getFirstname() == null || reqSignUp.getFirstname().isEmpty()) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the firstname");
-    }
-    if (reqSignUp.getLastname() == null || reqSignUp.getLastname().isEmpty()) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the lastname");
-    }
-    if (reqSignUp.getPhoneNumber() == null || reqSignUp.getPhoneNumber().isEmpty()) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "fill in the phone number");
-    }
-    try {
-      Long.parseLong(reqSignUp.getPhoneNumber().replace("+", ""));
-    } catch (Exception e) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "phone number mus be number ");
-    }
-    if (userRepository.existsByEmail(reqSignUp.getEmail())) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "this email is busy");
-    }
-    if (userRepository.existsByPhoneNumber(reqSignUp.getPhoneNumber())) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "phone number is buys");
-    }
-    if (userRepository.existsByPassportNumber(reqSignUp.getPhoneNumber())) {
-      return new ApiResponseModel(HttpStatus.CONFLICT.value(), "passport  is buys");
-    }
-    userRepository.save(
-        new User(
-            reqSignUp.getFirstname(),
-            reqSignUp.getLastname(),
-            reqSignUp.getMiddleName(),
-            reqSignUp.getAddress(),
-            reqSignUp.getWorkTimeType(),
-            reqSignUp.getFamily(),
-            reqSignUp.getPassportNumber(),
-            reqSignUp.getDateOfBirth(),
-            reqSignUp.getStartWorkingTime(),
-            reqSignUp.getPhoneNumber(),
-            reqSignUp.getEmail(),
-            userFieldsRepository.findAllByIdIn(reqSignUp.getFields()),
-            userExperiencesRepository.saveAll(reqSignUp.getExperiences()),
-            usersLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
-            programmingLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
-            passwordEncoder.encode(reqSignUp.getPassword()),
-            reqSignUp.isActive(),
-            roleRepository.findAllByNameIn(reqSignUp.getRoles()),
-            getPhoto(reqSignUp.getPhotoId())));
+
     mailService.sendEmail(
         reqSignUp.getFirstname() + " " + reqSignUp.getLastname(),
         reqSignUp.getEmail(),
@@ -173,15 +229,45 @@ public class AuthService implements UserDetailsService {
         reqSignUp.getFirstname() + " " + reqSignUp.getLastname(),
         "this is link put",
         reqSignUp.getPassword());
-    return new ApiResponseModel(HttpStatus.OK.value(), "saved", reqSignUp.getEmail());
-  }
 
-  public Attachment getPhoto(Long id) {
-    try {
-      return attachmentRepository.getById(id);
-    } catch (Exception e) {
-      return null;
-    }
+    userRepository.save(user);
+    return ResponseEntity.status(HttpStatus.ACCEPTED)
+        .body(
+            new ResourceException(
+                HttpStatus.OK.value(),
+                info,
+                new ReqUser(
+                    user.getId(),
+                    user.getFirstname(),
+                    user.getLastname(),
+                    user.getMiddlename(),
+                    user.getAddress(),
+                    user.getWorkTimeType(),
+                    user.getFamily(),
+                    user.getPassportNumber(),
+                    user.getDateOfBirth(),
+                    user.getStartWorkingTime(),
+                    user.getPhoneNumber(),
+                    user.getEmail(),
+                    user.getFields().stream()
+                        .map(
+                            fieldsForUsers ->
+                                new ReqIdAndName(fieldsForUsers.getId(), fieldsForUsers.getName()))
+                        .collect(Collectors.toList()),
+                    user.getExperiences(),
+                    user.getLanguages().stream()
+                        .map(
+                            usersLanguage ->
+                                new ReqIdAndName(usersLanguage.getId(), usersLanguage.getName()))
+                        .collect(Collectors.toList()),
+                    user.getProgramingLanguages(),
+                    user.getAvatar() == null
+                        ? null
+                        : ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/api/attach/")
+                            .path(user.getAvatar().getId().toString())
+                            .toUriString(),
+                    user.getRoles())));
   }
 
   public HttpEntity<?> getApiToken(String phoneNumber, String password) {
@@ -191,5 +277,85 @@ public class AuthService implements UserDetailsService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String jwt = jwtTokenProvider.generateToken(authentication);
     return ResponseEntity.ok(new JwtResponse(jwt));
+  }
+
+  public ApiResponseModel uploadPhotoFileList(MultipartHttpServletRequest request) {
+    try {
+
+      Iterator<String> iterator = request.getFileNames();
+      MultipartFile multipartFile;
+      List<ResUploadFile> resUploadFiles = new ArrayList<>();
+      if (iterator.hasNext()) {
+        multipartFile = request.getFile(iterator.next());
+        Attachment attachment = new Attachment();
+        assert multipartFile != null;
+        if (getExt(multipartFile.getOriginalFilename()) == null
+            || multipartFile.getSize() == 0
+            || !Objects.requireNonNull(multipartFile.getContentType()).startsWith("image")) {
+          return new ApiResponseModel(
+              HttpStatus.CONFLICT.value(), "file not confirmed ... send picture");
+        }
+        attachment.setContentType(multipartFile.getContentType());
+        attachment.setSize(multipartFile.getSize());
+        attachment.setName(multipartFile.getOriginalFilename());
+        attachment.setAttachmentType(AttachmentType.PROFILE);
+        attachment.setExtension(getExt(multipartFile.getOriginalFilename()));
+        Attachment save = attachmentRepository.save(attachment);
+        Calendar calendar = new GregorianCalendar();
+        File uploadFolder =
+            new File(
+                path
+                    + "/"
+                    + calendar.get(Calendar.YEAR)
+                    + "/"
+                    + calendar.get(Calendar.MONTH)
+                    + "/"
+                    + calendar.get(Calendar.DAY_OF_MONTH));
+
+        if (uploadFolder.mkdirs() && uploadFolder.exists()) {
+          System.out.println("create folder for user profile " + uploadFolder.getAbsolutePath());
+        }
+
+        uploadFolder = uploadFolder.getAbsoluteFile();
+        File file =
+            new File(
+                uploadFolder
+                    + "/"
+                    + save.getId()
+                    + "_"
+                    + attachment.getName()
+                    + save.getExtension());
+        save.setPath(file.getAbsolutePath());
+        multipartFile.transferTo(file);
+
+        Attachment save1 = attachmentRepository.save(save);
+        resUploadFiles.add(
+            new ResUploadFile(
+                save1.getId(),
+                save1.getName(),
+                ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("api/attach/")
+                    .path(attachment.getId().toString())
+                    .toUriString(),
+                save1.getAttachmentType(),
+                save1.getSize()));
+        return new ApiResponseModel(HttpStatus.OK.value(), "saved", resUploadFiles);
+      }
+      return new ApiResponseModel(HttpStatus.OK.value(), "not saved", null);
+
+    } catch (Exception e) {
+      return new ApiResponseModel(HttpStatus.CONFLICT.value(), e.getMessage(), null);
+    }
+  }
+
+  public String getExt(String fileName) {
+    String ext = null;
+    if (fileName != null && !fileName.isEmpty()) {
+      int dot = fileName.lastIndexOf(".");
+      if (dot > 0 && dot <= fileName.length() - 2) {
+        ext = fileName.substring(dot);
+      }
+    }
+    return ext;
   }
 }

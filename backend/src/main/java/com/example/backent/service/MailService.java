@@ -22,33 +22,39 @@ public class MailService {
 
   @Autowired private Configuration config;
 
-  public void sendEmail(String name, String to, String from, String subject, String user, String ip, String pass) {
-    try {
+  public void sendEmail(
+      String name, String to, String from, String subject, String user, String ip, String pass) {
 
-      MimeMessage message = sender.createMimeMessage();
-      MimeMessageHelper helper =
-          new MimeMessageHelper(
-              message,
-              MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-              StandardCharsets.UTF_8.name());
-      Template t = config.getTemplate("email.ftl");
+    new Thread(
+            () -> {
+              try {
 
-      Map<String, String> mail = new HashMap<>();
-      mail.put("name", name);
-      mail.put("user", user);
-      mail.put("to", to);
-      mail.put("ip", ip);
-      mail.put("pass", pass);
+                MimeMessage message = sender.createMimeMessage();
+                MimeMessageHelper helper =
+                    new MimeMessageHelper(
+                        message,
+                        MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                        StandardCharsets.UTF_8.name());
+                Template t = config.getTemplate("email.ftl");
 
-      String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail);
-      helper.setTo(to);
-      helper.setText(html, true);
-      helper.setSubject(subject);
-      helper.setFrom(from);
-      sender.send(message);
-      System.out.println("Email ushbu pochtaga jo'natildi: ");
-    } catch (MessagingException | IOException | TemplateException e) {
-      System.out.println("Email yuborishda xatolik bo'ldi : ");
-    }
+                Map<String, String> mail = new HashMap<>();
+                mail.put("name", name);
+                mail.put("user", user);
+                mail.put("to", to);
+                mail.put("ip", ip);
+                mail.put("pass", pass);
+
+                String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail);
+                helper.setTo(to);
+                helper.setText(html, true);
+                helper.setSubject(subject);
+                helper.setFrom(from);
+                sender.send(message);
+                System.out.println("Email ushbu pochtaga jo'natildi: ");
+              } catch (MessagingException | IOException | TemplateException e) {
+                System.err.println("Email yuborishda xatolik bo'ldi : ");
+              }
+            })
+        .start();
   }
 }

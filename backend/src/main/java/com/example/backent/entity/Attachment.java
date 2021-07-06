@@ -15,12 +15,14 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class Attachment extends AbsEntity {
-    private String name;
-    private String telegramURL;
-    private String path;
-    private String content;
-    @Enumerated(EnumType.STRING)
-    private AttachmentType attachmentType;
-    private long size;
+  private String name; //
+  private String telegramURL;
+  private String path;
+  private String contentType; //
+  private String extension;
 
+  @Enumerated(EnumType.STRING)
+  private AttachmentType attachmentType; //
+
+  private long size; //
 }

@@ -11,18 +11,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "users")
-@XmlRootElement
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,9 +55,9 @@ public class User extends AbsEntity implements UserDetails {
   @ManyToMany
   private List<FieldsForUsers> fields; // REQUIRED
 
-  @ManyToMany private List<UserExperience> experiences; // REQUIRED
+  @ManyToMany private List<UserExperience> experiences;
 
-  @ManyToMany private List<UsersLanguage> languages; // REQUIRED
+  @ManyToMany private List<UsersLanguage> languages;
 
   @ManyToMany private List<ProgramingLanguage> programingLanguages;
 
