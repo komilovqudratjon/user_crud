@@ -48,9 +48,10 @@ public class CompleteQuestionService {
             }
             fullQuestion.setText(reqFullQuestion.getText());
             fullQuestion.setLink(reqFullQuestion.getLink());
-            full.save(fullQuestion);
+            CompleteQuestion question = full.save(fullQuestion);
             response.setCode(200);
             response.setMessage("success !");
+            response.setData(question.getId());
         }catch(Exception e){
             response.setCode(500);
             response.setMessage("error");

@@ -30,8 +30,14 @@ public class AgreementService {
             Agreement agreement = new Agreement();
             agreement.setWhy(reqAgreement.getWhy());
             Optional<Attachment> optionalAttachment = attachmentRepository.findById(reqAgreement.getFileId());
-            agreement.setAFile(optionalAttachment.get());
-            agreementRepository.save(agreement);
+            if(optionalAttachment.isPresent()){
+                agreement.setAFile(optionalAttachment.get());
+                agreementRepository.save(agreement);
+            }else{
+                apiResponseModel.setCode(207);
+                apiResponseModel.setMessage("FILE ID DID NOT FOUND");
+                return apiResponseModel;
+            }
             apiResponseModel.setCode(200);
             apiResponseModel.setMessage("success");
         }catch(Exception e){

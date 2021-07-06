@@ -8,6 +8,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/project")
 public class ProjectController {
@@ -20,7 +22,13 @@ public class ProjectController {
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping
+  @PostMapping("/add/user")
+  public HttpEntity<?> addUser(@RequestParam Long userId , @RequestParam Long projectId) {
+    ApiResponseModel response = projectService.addUserToProject(userId, projectId);
+    return ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/edit")
   public HttpEntity<?> editProject(@RequestBody ReqProject reqProject) {
     ApiResponseModel response = projectService.editAgreementAndCompany(reqProject);
     return ResponseEntity.ok(response);
@@ -40,7 +48,19 @@ public class ProjectController {
 
   @GetMapping("/process/{id}")
   public HttpEntity<?> getProcess(@PathVariable Long id) {
-    ApiResponseModel response = projectService.projectCondition(id);
+    ApiResponseModel response = projectService.oneProjectsStatus(id);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/all/status")
+  public HttpEntity<?> allProjectsStatus(){
+    ApiResponseModel response = projectService.allProjectStatus();
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/get/one/{id}")
+  public HttpEntity<?> getOneProject(@PathVariable Long id){
+    ApiResponseModel response = projectService.getOneProject(id);
     return ResponseEntity.ok(response);
   }
 }

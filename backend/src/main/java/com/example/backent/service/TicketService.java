@@ -1,7 +1,9 @@
 package com.example.backent.service;
 
 import com.example.backent.entity.*;
+import com.example.backent.entity.enums.BoardCondition;
 import com.example.backent.entity.enums.TicketCondition;
+import com.example.backent.entity.enums.WorkType;
 import com.example.backent.payload.*;
 import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +33,80 @@ public class TicketService {
   @Autowired ProjectTypeRepository projectTypeRepository;
 
   public ApiResponseModel addOrEditTicket(ReqTicket reqTicket) {
-    Ticket ticket = new Ticket();
-    ticket.setWorkType(reqTicket.getWorkType());
-    ticket.setText(reqTicket.getText());
-    ticket.setTicketCondition(TicketCondition.CREATED);
-    ticket.setWorker(getUser(reqTicket.getWorkerId()));
-    ticket.setPm(getUser(reqTicket.getPmId()));
-    ticket.setTester(getUser(reqTicket.getTesterId()));
-    ticket.setHoursWorker(reqTicket.getHoursWorker());
-    ticket.setHoursTester(reqTicket.getHoursTester());
-    ticket.setBoard(getBoard(reqTicket.getBoard()));
-    ticket.setProgramingLanguage(getProgramingLanguage(reqTicket.getProgramingLanguage()));
-    ticket.setCompleteQuestion(getCompleteQuestion(ticket.getId()));
-    ticketRepository.save(ticket);
-    return new ApiResponseModel(200,"success");
+    ApiResponseModel response = new ApiResponseModel();
+    try{
+      Ticket ticket = new Ticket();
+      if(reqTicket.getWorkType()!=null){
+        ticket.setWorkType(WorkType.valueOf(reqTicket.getWorkType()));
+      }else{
+        response.setCode(207);
+        response.setMessage("ENTER WORK TYPE");
+        return response;
+      }
+      ticket.setText(reqTicket.getText());
+      if(reqTicket.getWorkerId()!=null){
+        Optional<User> worker = userRepository.findById(reqTicket.getWorkerId());
+        if(worker.isPresent()){
+          ticket.setWorker(worker.get());
+          ticket.setBoard(getOneBoard(reqTicket.getProject(),BoardCondition.ATTACHED));
+        }else{
+          response.setCode(207);
+          response.setMessage("USER ID DID NOT FOUND");
+          return response;
+        }
+      }else{
+        ticket.setBoard(getOneBoard(reqTicket.getProject(),BoardCondition.CREATED));
+      }
+      if(reqTicket.getPmId()!=null){
+        Optional<User> user = userRepository.findById(reqTicket.getPmId());
+        if(user.isPresent()){
+          ticket.setPm(user.get());
+        }else{
+          response.setCode(207);
+          response.setMessage("PM ID DID NOT FOUND ");
+          return response;
+        }
+      }
+      if(reqTicket.getTesterId()!=null){
+        Optional<User> user = userRepository.findById(reqTicket.getTesterId());
+        if(user.isPresent()){
+          ticket.setTester(user.get());
+        }else{
+          response.setCode(207);
+          response.setMessage("TESTER ID DID NOT FOUND ");
+          return response;
+        }
+      }
+      ticket.setHoursWorker(reqTicket.getHoursWorker());
+      ticket.setHoursTester(reqTicket.getHoursTester());
+      if(reqTicket.getProgramingLanguage()!=null){
+        Optional<ProgramingLanguage> language = programmingLanguageRepository.findById(reqTicket.getProgramingLanguage());
+        if(language.isPresent()){
+          ticket.setProgramingLanguage(language.get());
+        }else{
+          response.setCode(207);
+          response.setMessage("LANGUAGE ID DID NOT FOUND");
+          return response;
+        }
+      }
+      if(reqTicket.getCompleteQuestion()!=null){
+        Optional<CompleteQuestion> question = completeQuestionRepository.findById(reqTicket.getCompleteQuestion());
+        if(question.isPresent()){
+          ticket.setCompleteQuestion(question.get());
+        }else{
+          response.setCode(207);
+          response.setMessage("QUESTION ID DID NOT FOUND");
+          return response;
+        }
+      }
+      ticketRepository.save(ticket);
+      response.setCode(200);
+      response.setMessage("success");
+    }catch(Exception e){
+      response.setCode(500);
+      response.setMessage("error");
+    }
+    return response;
   }
 
   public ApiResponseModel getTicket(Long id) {
@@ -66,46 +128,11 @@ public class TicketService {
     return response;
   }
 
-  public ProgramingLanguage getProgramingLanguage(Long id) {
-    try {
-      if (id != null) {
-        return programmingLanguageRepository.getById(id);
-      }
-      return null;
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  public CompleteQuestion getCompleteQuestion(Long id) {
-    try {
-      if (id != null) {
-        return completeQuestionRepository.getById(id);
-      }
-      return null;
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  public User getUser(Long id) {
-    try {
-      if (id != null) {
-        return userRepository.getById(id);
-      }
-      return null;
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  public Board getBoard(Long id) {
-    try {
-      if (id != null) {
-        return boardRepository.getById(id);
-      }
-      return null;
-    } catch (Exception e) {
+  public Board getOneBoard(Long projectId,BoardCondition condition){
+    Optional<Board> board = boardRepository.findByProjectIdAndCondition(projectId, condition);
+    if(board.isPresent()){
+      return board.get();
+    }else{
       return null;
     }
   }
@@ -130,10 +157,30 @@ public class TicketService {
     return response;
   }
 
-  public ApiResponseModel backLock(Long projectId , String condition){
+  public ApiResponseModel getTicketByBoardCondition(Long projectId , String condition){
     ApiResponseModel response= new ApiResponseModel();
     try{
-      List<ResTicket> backlog = ticketRepository.selectByConditionAndProjectId(projectId,condition).stream().map(this::getTicket).collect(Collectors.toList());
+      List<ResTicket> backlog = ticketRepository.selectByConditionAndProjectId(projectId,condition)
+              .stream()
+              .map(this::getTicket)
+              .collect(Collectors.toList());
+      response.setData(backlog);
+      response.setCode(200);
+      response.setMessage("success");
+    }catch(Exception e){
+      response.setCode(500);
+      response.setMessage("error");
+    }
+    return response;
+  }
+
+  public ApiResponseModel getBecklog(Long projectId){
+    ApiResponseModel response= new ApiResponseModel();
+    try{
+      List<ResTicket> backlog = ticketRepository.getBacklog(projectId)
+              .stream()
+              .map(this::getTicket)
+              .collect(Collectors.toList());
       response.setData(backlog);
       response.setCode(200);
       response.setMessage("success");
@@ -217,12 +264,6 @@ public class TicketService {
           Optional<Board> board = boardRepository.findById(reqTicket.getBoard());
           if(board.isPresent()){
             ticket.get().setBoard(board.get());
-//            if(board.get().getCondition().name()=="DONE"){
-//              ticket.get().setTicketCondition(TicketCondition.valueOf("DONE"));
-//            }
-//            if(board.get().getCondition().name()=="PROCESS"){
-//              ticket.get().setTicketCondition(TicketCondition.valueOf("DONE"));
-//            }
           }else{
             response.setCode(207);
             response.setMessage("bunaqa idlik board mavjud emas!");
@@ -247,7 +288,7 @@ public class TicketService {
           Optional<User> worker = userRepository.findById(reqTicket.getWorkerId());
           if(worker.isPresent()){
             ticket.get().setWorker(worker.get());
-            ticket.get().setTicketCondition(TicketCondition.ATTACHED);
+//            ticket.get().setTicketCondition(TicketCondition.ATTACHED);
           }else{
             response.setCode(207);
             response.setMessage("bunaqa idlik worker mavjud emas");
@@ -281,7 +322,7 @@ public class TicketService {
           ticket.get().setText(reqTicket.getText());
         }
         if(reqTicket.getWorkType()!=null){
-          ticket.get().setWorkType(reqTicket.getWorkType());
+          ticket.get().setWorkType(WorkType.valueOf(reqTicket.getWorkType()));
         }
         if(reqTicket.getType()!=null){
           Optional<ProjectType> type = projectTypeRepository.findById(reqTicket.getType());

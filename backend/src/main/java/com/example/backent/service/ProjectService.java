@@ -1,11 +1,8 @@
 package com.example.backent.service;
 
-import com.example.backent.entity.Agreement;
-import com.example.backent.entity.Company;
-import com.example.backent.entity.Project;
-import com.example.backent.payload.ApiResponseModel;
-import com.example.backent.payload.ReqProject;
-import com.example.backent.payload.ResProject;
+import com.example.backent.entity.*;
+import com.example.backent.entity.enums.BoardCondition;
+import com.example.backent.payload.*;
 import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +16,24 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
-  @Autowired ProjectRepository projectRepository;
+    @Autowired
+    ProjectRepository projectRepository;
 
-  @Autowired CompanyRepository companyRepository;
+    @Autowired
+    CompanyRepository companyRepository;
 
-    @Autowired AgreementRepository agreementRepository;
+    @Autowired
+    AgreementRepository agreementRepository;
 
-    @Autowired TicketRepository ticketRepository;
+    @Autowired
+    TicketRepository ticketRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BoardRepository boardRepository;
+
 
     public ApiResponseModel addOrEditProject(ReqProject reqProject) {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
@@ -48,8 +56,29 @@ public class ProjectService {
                     List<Agreement> allById = agreementRepository.findAllById(reqProject.getAgreements());
                     project.setAgreementList(allById);
                 }
+                if (reqProject.getUsers() != null) {
+                    List<User> list = new ArrayList<>();
+                    for (int i = 0; i < reqProject.getUsers().size(); i++) {
+                        Optional<User> user = userRepository.findById(reqProject.getId());
+                        if (user.isPresent()) {
+                            list.add(user.get());
+                        } else {
+                            apiResponseModel.setCode(207);
+                            apiResponseModel.setMessage("user id:" + reqProject.getUsers().get(i) + " did not found ");
+                            return apiResponseModel;
+                        }
+                    }
+                    project.setUsers(list);
+                }
+                project.setStartDate(reqProject.getStartDate());
+                project.setEndDate(reqProject.getEndDate());
                 project.setName(reqProject.getName());
-                projectRepository.save(project);
+                Project project1 = projectRepository.save(project);
+                boardRepository.save(new Board("name1",project1,1l, BoardCondition.CREATED));
+                boardRepository.save(new Board("name2",project1,2l, BoardCondition.ATTACHED));
+                boardRepository.save(new Board("name3",project1,3l, BoardCondition.PROCESS));
+                boardRepository.save(new Board("name4",project1,4l, BoardCondition.TEST));
+                boardRepository.save(new Board("name5",project1,5l, BoardCondition.DONE));
             } else {
                 apiResponseModel.setCode(205);
                 apiResponseModel.setMessage("bunaqa idlik companiya mavjud emas");
@@ -66,23 +95,28 @@ public class ProjectService {
 
     public ApiResponseModel editAgreementAndCompany(ReqProject reqProject) {
         ApiResponseModel apiResponseModel = new ApiResponseModel();
-        List<Agreement> allById = null;
+//        List<Agreement> allById = null;
         try {
+            if(reqProject.getCompanyId()==null){
+                apiResponseModel.setCode(207);
+                apiResponseModel.setMessage("enter company id for edit");
+                return apiResponseModel;
+            }
             Optional<Project> optionalProject = projectRepository.findById(reqProject.getCompanyId());
             if (optionalProject.isPresent()) {
                 if (reqProject.getAgreements() != null) {
                     try {
                         for (int i = 0; i < reqProject.getAgreements().size(); i++) {
                             Optional<Agreement> agreement = agreementRepository.findById(reqProject.getAgreements().get(i));
-                            if(agreement.isPresent()){
+                            if (agreement.isPresent()) {
                                 optionalProject.get().getAgreementList().add(agreement.get());
-                            }else{
+                            } else {
                                 apiResponseModel.setCode(207);
-                                apiResponseModel.setMessage("AGREEMENT ID : "+reqProject.getAgreements().get(i)+" not found");
+                                apiResponseModel.setMessage("AGREEMENT ID : " + reqProject.getAgreements().get(i) + " not found");
                                 return apiResponseModel;
                             }
                         }
-                        optionalProject.get().getAgreementList().addAll(allById);
+//                        optionalProject.get().getAgreementList().addAll(allById);
                     } catch (Exception e) {
                         apiResponseModel.setCode(500);
                         apiResponseModel.setMessage("error");
@@ -108,80 +142,209 @@ public class ProjectService {
         return apiResponseModel;
     }
 
-    public ApiResponseModel getAllProjects(){
+    public ApiResponseModel getAllProjects() {
         ApiResponseModel response = new ApiResponseModel();
-        try{
+        try {
             List<ResProject> projectList = projectRepository.findAllByDeleted(false).stream().map(this::getProject).collect(Collectors.toList());
             response.setCode(200);
             response.setMessage("success !");
             response.setData(projectList);
-        }catch(Exception e){
+        } catch (Exception e) {
             response.setCode(200);
             response.setMessage("error");
         }
         return response;
     }
 
-    public ApiResponseModel delete(Long id){
+    public ApiResponseModel delete(Long id) {
         ApiResponseModel response = new ApiResponseModel();
-        try{
+        try {
             Optional<Project> project = projectRepository.findById(id);
-            if(project.isPresent()){
+            if (project.isPresent()) {
                 project.get().setDeleted(true);
                 projectRepository.save(project.get());
-            }else{
+            } else {
                 response.setCode(207);
-                response.setMessage("bunaqa idlik project mavjud emas !" );
+                response.setMessage("bunaqa idlik project mavjud emas !");
             }
             response.setMessage("success !");
             response.setCode(200);
-        }catch(Exception e){
+        } catch (Exception e) {
             response.setCode(500);
             response.setMessage("error !");
         }
         return response;
     }
 
-    public ResProject getProject(Project project){
+    public ResProject getProject(Project project) {
         return new ResProject(
                 project.getId(),
                 project.getName(),
                 project.getCompany(),
-                getListLink(project.getAgreementList())
+                getListLink(project.getAgreementList()),
+                project.getUsers()!=null?getUsers(project.getUsers()):null
         );
     }
 
-    public List<String> getListLink(List<Agreement> list){
-        List<String> list1 = new ArrayList<>();
+    public List<ResUser> getUsers(List<User> list){
+        List<ResUser> res = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            list1.add(list.get(i).getAFile()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(list.get(i).getAFile().getId().toString()).toUriString():"null");
+            res.add(getUser(list.get(i)));
         }
-        return list1;
+        return res;
     }
 
-    public ApiResponseModel projectCondition(Long id){
+    public ApiResponseModel getOneProject(Long id){
         ApiResponseModel response = new ApiResponseModel();
         try{
             Optional<Project> project = projectRepository.findById(id);
             if(project.isPresent()){
-                Long all = ticketRepository.allTicketByProject(id);
-                Long done = ticketRepository.findDoneTicket(id);
                 response.setCode(200);
                 response.setMessage("success");
-                response.setData(done/all);
+                response.setData(getProject(project.get()));
             }else{
-                response.setMessage("bunaqa idlik project mavjud emas");
                 response.setCode(207);
+                response.setMessage("PROEJCT ID DID NOT FOUND");
             }
         }catch(Exception e){
-            response.setMessage("error");
             response.setCode(500);
+            response.setMessage("error");
         }
         return response;
     }
 
-  public ApiResponseModel allProjectsStatus() {
+    public List<String> getListLink(List<Agreement> list) {
+        List<String> list1 = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            list1.add(list.get(i).getAFile() != null ? ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(list.get(i).getAFile().getId().toString()).toUriString() : "null");
+        }
+        return list1;
+    }
 
-    return null;
-  }
+    public ApiResponseModel oneProjectsStatus(Long projectId) {
+        ApiResponseModel response = new ApiResponseModel();
+        try {
+            Optional<Project> project = projectRepository.findById(projectId);
+            if (project.isPresent()) {
+                Long backHours = ticketRepository.countAllTicketByWorkType("BACKEND", projectId);
+                Long backHoursDone = ticketRepository.countDoneTicketByWorkType("BACKEND", projectId);
+                Long frontendHours = ticketRepository.countAllTicketByWorkType("FRONTEND", projectId);
+                Long frontendHoursDone = ticketRepository.countDoneTicketByWorkType("FRONTEND", projectId);
+                Long designHours = ticketRepository.countAllTicketByWorkType("DESIGN", projectId);
+                Long designHoursDone = ticketRepository.countDoneTicketByWorkType("DESIGN", projectId);
+                ResProjectCondition res = new ResProjectCondition();
+                res.setId(project.get().getId());
+                res.setStartDate(project.get().getStartDate());
+                res.setEndDate(project.get().getEndDate());
+                if(backHours!=0){
+                    if(backHoursDone!=0){
+                        res.setBackend(backHoursDone / backHours);
+                    }else{
+                        res.setBackend(0L);
+                    }
+                }
+                if(frontendHours!=0){
+                    if(frontendHoursDone!=0){
+                        res.setFrontend(frontendHoursDone / frontendHours);
+                    }else{
+                        res.setFrontend(0L);
+                    }
+                }
+                if(designHours!=0){
+                    if(designHoursDone!=0){
+                        res.setDesign(designHoursDone / designHours);
+                    }else{
+                        res.setDesign(0L);
+                    }
+                }
+//                res.setAllPercentage((backHoursDone + frontendHoursDone + designHoursDone)/(backHours + frontendHours + designHours));
+                res.setBackends(setUsers(project.get().getUsers(), "backend"));
+                res.setFrontends(setUsers(project.get().getUsers(), "frontend"));
+                res.setDesigns(setUsers(project.get().getUsers(), "design"));
+                res.setTesters(setUsers(project.get().getUsers(), "tester"));
+                res.setQas(setUsers(project.get().getUsers(), "qu"));
+                response.setData(res);
+            } else {
+                response.setCode(207);
+                response.setMessage("PROJECT ID : " + projectId + " DID NOT DOUND");
+                return response;
+            }
+            response.setCode(200);
+            response.setMessage("success");
+        } catch (Exception e) {
+            response.setCode(500);
+            response.setMessage("error");
+        }
+        return response;
+    }
+
+    public ApiResponseModel allProjectStatus(){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            List<ResProjectCondition> list = new ArrayList<>();
+            List<Project> projects = projectRepository.findAll();
+            for (int i = 0; i < projects.size(); i++) {
+                ResProjectCondition oneStatus =(ResProjectCondition) oneProjectsStatus(projects.get(i).getId()).getData();
+                list.add(oneStatus);
+            }
+            response.setCode(200);
+            response.setMessage("success");
+            response.setData(list);
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("error");
+        }
+        return response;
+    }
+
+    public ApiResponseModel addUserToProject(Long userId, Long projectId){
+        ApiResponseModel response = new ApiResponseModel();
+        try{
+            Optional<Project> project = projectRepository.findById(projectId);
+            Optional<User> user = userRepository.findById(userId);
+            if(project.isPresent()){
+                if(user.isPresent()){
+                    project.get().getUsers().add(user.get());
+                    projectRepository.save(project.get());
+                }else{
+                    response.setCode(207);
+                    response.setMessage("USER IS DID NOT FOUND ");
+                    return response;
+                }
+            }else{
+                response.setCode(207);
+                response.setMessage("PROJECT IS DID NOT FOUND ");
+                return response;
+            }
+            response.setCode(200);
+            response.setMessage("success");
+        }catch(Exception e){
+            response.setCode(500);
+            response.setMessage("error");
+        }
+        return response;
+    }
+
+    public List<ResUser> setUsers(List<User> list, String workType) {
+        List<ResUser> all = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.get(i).getFields().size(); j++) {
+                if (list.get(i).getFields().get(j).getName() == workType) {
+                    all.add(getUser(list.get(i)));
+                }
+            }
+        }
+        return all;
+    }
+
+    public ResUser getUser(User user) {
+        return new ResUser(
+                user.getId(),
+                user.getFirstname(),
+                user.getEmail(),
+                user.getAvatar() != null ?
+                        ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(user.getAvatar().getId().toString()).toUriString() : null
+        );
+    }
+
 }

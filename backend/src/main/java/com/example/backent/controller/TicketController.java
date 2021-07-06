@@ -27,9 +27,15 @@ public class TicketController {
     return ticketService.deleteTicket(id);
   }
 
+  @GetMapping("/ticket/by/board")
+  public HttpEntity<?> tickets(@RequestParam Long projectId,@RequestParam String condition){
+    ApiResponseModel response = ticketService.getTicketByBoardCondition(projectId,condition);
+    return ResponseEntity.ok(response);
+  }
+
   @GetMapping("/backlog")
-  public HttpEntity<?> backlog(@RequestParam Long projectId,@RequestParam String condition){
-    ApiResponseModel response = ticketService.backLock(projectId,condition);
+  public HttpEntity<?> backlog(@RequestParam Long projectId){
+    ApiResponseModel response = ticketService.getBecklog(projectId);
     return ResponseEntity.ok(response);
   }
 
