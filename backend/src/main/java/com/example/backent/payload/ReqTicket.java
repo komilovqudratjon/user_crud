@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReqTicket {
   private Long id;
-  private WorkType workType;
+  private String workType;
   private String text;
   private Long workerId;
   private Long pmId;
@@ -19,6 +19,7 @@ public class ReqTicket {
   private Long hoursWorker;
   private Long hoursTester;
   private Long board;
+  private Long project;
   private Long programingLanguage;
   private Long completeQuestion;
   private Boolean deleted;

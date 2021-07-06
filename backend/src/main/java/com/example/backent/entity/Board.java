@@ -30,5 +30,10 @@ public class Board extends AbsEntity {
   @Enumerated(EnumType.STRING)
   private BoardCondition condition;
 
-
+  public Board(String name, Project project, Long index, BoardCondition condition) {
+    this.name = name;
+    this.project = project;
+    this.index = index;
+    this.condition = condition;
+  }
 }

@@ -14,4 +14,5 @@ public class ResProject {
     private String name;
     private Company company;
     private List<String> agreement;
+    private List<ResUser> users;
 }
