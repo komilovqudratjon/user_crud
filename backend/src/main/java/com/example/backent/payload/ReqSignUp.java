@@ -23,10 +23,10 @@ public class ReqSignUp {
 
   @NotNull
   @NotBlank()
-  @Pattern(regexp = "[a-z]*", message = "firstname is invalid")
+  @Pattern(regexp = "[A-z]*", message = "firstname is invalid")
   private String firstname;
 
-  @Pattern(regexp = "[a-z]*", message = "lastname is invalid")
+  @Pattern(regexp = "[A-z]*", message = "lastname is invalid")
   @NotNull
   @NotBlank()
   private String lastname;

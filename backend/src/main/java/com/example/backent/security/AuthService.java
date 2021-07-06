@@ -29,6 +29,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -248,9 +249,17 @@ public class AuthService implements UserDetailsService {
                     user.getStartWorkingTime(),
                     user.getPhoneNumber(),
                     user.getEmail(),
-                    user.getFields(),
+                    user.getFields().stream()
+                        .map(
+                            fieldsForUsers ->
+                                new ReqIdAndName(fieldsForUsers.getId(), fieldsForUsers.getName()))
+                        .collect(Collectors.toList()),
                     user.getExperiences(),
-                    user.getLanguages(),
+                    user.getLanguages().stream()
+                        .map(
+                            usersLanguage ->
+                                new ReqIdAndName(usersLanguage.getId(), usersLanguage.getName()))
+                        .collect(Collectors.toList()),
                     user.getProgramingLanguages(),
                     user.getAvatar() == null
                         ? null

@@ -38,11 +38,11 @@ public class ReqUser {
 
   private String email;
 
-  private List<FieldsForUsers> fields;
+  private List<ReqIdAndName> fields;
 
   private List<UserExperience> experiences;
 
-  private List<UsersLanguage> languages;
+  private List<ReqIdAndName> languages;
 
   private List<ProgramingLanguage> programingLanguages;
 

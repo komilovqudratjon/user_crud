@@ -27,8 +27,11 @@ import java.text.ParseException;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
   @Autowired JwtTokenProvider jwtTokenProvider;
+
   @Autowired AuthenticationManager authenticate;
+
   @Autowired AuthService authService;
 
   // **************** GET  YOURSELF  ****************//
@@ -81,7 +84,7 @@ public class AuthController {
                       .getBody()));
     } catch (Exception e) {
       return ResponseEntity.badRequest()
-          .body(new ResourceException(HttpStatus.CONFLICT.value(), "login error", null));
+          .body(new ResourceException(HttpStatus.CONFLICT.value(), "login error", e.getMessage()));
     }
   }
 

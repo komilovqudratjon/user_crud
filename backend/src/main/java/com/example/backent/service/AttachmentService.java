@@ -5,7 +5,6 @@ import com.example.backent.entity.enums.AttachmentType;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +16,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Optional;
 
 @Service
 public class AttachmentService {
 
-    @Autowired
-    AttachmentRepository attachmentRepository;
+  @Autowired AttachmentRepository attachmentRepository;
 
   public ApiResponseModel uploadFile(MultipartHttpServletRequest request) {
     ApiResponseModel response = new ApiResponseModel();

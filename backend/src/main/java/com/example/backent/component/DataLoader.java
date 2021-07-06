@@ -47,6 +47,17 @@ public class DataLoader implements CommandLineRunner {
     }
 
     if (initialMode) {
+      List<FieldsForUsers> save =
+          List.of(
+              userFieldsRepository.save(new FieldsForUsers("backend")),
+              userFieldsRepository.save(new FieldsForUsers("frontend")),
+              userFieldsRepository.save(new FieldsForUsers("tester")),
+              userFieldsRepository.save(new FieldsForUsers("design")));
+      List<UsersLanguage> save1 =
+          List.of(
+              userLanguageRepository.save(new UsersLanguage("uz")),
+              userLanguageRepository.save(new UsersLanguage("en")),
+              userLanguageRepository.save(new UsersLanguage("ru")));
 
       userRepository.save(
           new User(
@@ -60,26 +71,46 @@ public class DataLoader implements CommandLineRunner {
               new Date(1999, Calendar.MARCH, 3),
               new Date(2020, Calendar.NOVEMBER, 20),
               "+99891779778",
-              "koinot@koinot.com",
-              List.of(
-                  userFieldsRepository.save(new FieldsForUsers("backend")),
-                  userFieldsRepository.save(new FieldsForUsers("frontend")),
-                  userFieldsRepository.save(new FieldsForUsers("tester")),
-                  userFieldsRepository.save(new FieldsForUsers("design"))),
+              "koinot@gmail.com",
+              save,
               List.of(
                   userExperiencesRepository.save(
                       new UserExperience("postgres", 6L, TimeType.MONTH)),
                   userExperiencesRepository.save(
                       new UserExperience("postgres", 6L, TimeType.MONTH))),
-              List.of(
-                  userLanguageRepository.save(new UsersLanguage("uz")),
-                  userLanguageRepository.save(new UsersLanguage("en")),
-                  userLanguageRepository.save(new UsersLanguage("ru"))),
+              save1,
               null,
               passwordEncoder.encode("koinot"),
               true,
               roleRepository.findAllByNameIn(Collections.singletonList(RoleName.SUPER_ADMIN)),
               null));
+      for (int i = 0; i < 10; i++) {
+        userRepository.save(
+            new User(
+                "Qudratjon" + 1,
+                "Komilov" + 1,
+                "Qobil o'g'li",
+                "Ko'kcha masjit",
+                WorkTimeType.FULL_TIME,
+                Family.NOT_MARRED,
+                "AB539177" + i,
+                new Date(1999, Calendar.MARCH, 3),
+                new Date(2020, Calendar.NOVEMBER, 20),
+                "+99891794" + i,
+                "koinot" + i + "@gmail.com",
+                save,
+                List.of(
+                    userExperiencesRepository.save(
+                        new UserExperience("postgres", 6L, TimeType.MONTH)),
+                    userExperiencesRepository.save(
+                        new UserExperience("postgres", 6L, TimeType.MONTH))),
+                save1,
+                null,
+                passwordEncoder.encode("koinot"),
+                true,
+                roleRepository.findAllByNameIn(Collections.singletonList(RoleName.DEV)),
+                null));
+      }
     }
   }
 }
