@@ -238,21 +238,21 @@ public class ProjectService {
                 res.setEndDate(project.get().getEndDate());
                 if(backHours!=null){
                     if(backHoursDone!=null){
-                        res.setBackend(backHoursDone / backHours);
+                        res.setBackend((backHoursDone / backHours)*100);
                     }else{
                         res.setBackend(null);
                     }
                 }
                 if(frontendHours!=null){
                     if(frontendHoursDone!=null){
-                        res.setFrontend(frontendHoursDone / frontendHours);
+                        res.setFrontend((frontendHoursDone / frontendHours)*100);
                     }else{
                         res.setFrontend(null);
                     }
                 }
                 if(designHours!=null){
                     if(designHoursDone!=null){
-                        res.setDesign(designHoursDone / designHours);
+                        res.setDesign((designHoursDone / designHours)*100);
                     }else{
                         res.setDesign(null);
                     }
@@ -329,7 +329,7 @@ public class ProjectService {
         List<ResUser> all = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).getFields().size(); j++) {
-                if (list.get(i).getFields().get(j).getName() == workType) {
+                if (list.get(i).getFields().get(j).getName().equals(workType)) {
                     all.add(getUser(list.get(i)));
                 }
             }
