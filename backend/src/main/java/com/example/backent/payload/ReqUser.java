@@ -30,9 +30,9 @@ public class ReqUser {
 
   private String passportNumber;
 
-  private Date dateOfBirth;
+  private String dateOfBirth;
 
-  private Date startWorkingTime;
+  private String startWorkingTime;
 
   private String phoneNumber;
 

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -144,8 +145,8 @@ public class UserService {
                           user.getWorkTimeType(),
                           user.getFamily(),
                           user.getPassportNumber(),
-                          user.getDateOfBirth(),
-                          user.getStartWorkingTime(),
+                          new SimpleDateFormat("yyyy-MM-dd").format(user.getDateOfBirth()),
+                          new SimpleDateFormat("yyyy-MM-dd").format(user.getStartWorkingTime()),
                           user.getPhoneNumber(),
                           user.getEmail(),
                           user.getFields().stream()

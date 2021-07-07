@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -84,7 +85,11 @@ public class AuthController {
                       .getBody()));
     } catch (Exception e) {
       return ResponseEntity.badRequest()
-          .body(new ResourceException(HttpStatus.CONFLICT.value(), "login error", e.getMessage()));
+          .body(
+              new ApiResponseModel(
+                  HttpStatus.CONFLICT.value(),
+                  "error",
+                  List.of(new ErrorsField("error", e.getMessage()))));
     }
   }
 

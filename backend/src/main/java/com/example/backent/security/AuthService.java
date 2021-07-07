@@ -245,8 +245,8 @@ public class AuthService implements UserDetailsService {
                     user.getWorkTimeType(),
                     user.getFamily(),
                     user.getPassportNumber(),
-                    user.getDateOfBirth(),
-                    user.getStartWorkingTime(),
+                    new SimpleDateFormat("yyyy-MM-dd").format(user.getDateOfBirth()),
+                    new SimpleDateFormat("yyyy-MM-dd").format(user.getStartWorkingTime()),
                     user.getPhoneNumber(),
                     user.getEmail(),
                     user.getFields().stream()
