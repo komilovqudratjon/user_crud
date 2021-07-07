@@ -226,35 +226,35 @@ public class ProjectService {
         try {
             Optional<Project> project = projectRepository.findById(projectId);
             if (project.isPresent()) {
-                Long backHours = ticketRepository.countAllTicketByWorkType("BACKEND", projectId);
-                Long backHoursDone = ticketRepository.countDoneTicketByWorkType("BACKEND", projectId);
-                Long frontendHours = ticketRepository.countAllTicketByWorkType("FRONTEND", projectId);
-                Long frontendHoursDone = ticketRepository.countDoneTicketByWorkType("FRONTEND", projectId);
-                Long designHours = ticketRepository.countAllTicketByWorkType("DESIGN", projectId);
-                Long designHoursDone = ticketRepository.countDoneTicketByWorkType("DESIGN", projectId);
+                Double backHours = ticketRepository.countAllTicketByWorkType("BACKEND", projectId);
+                Double backHoursDone = ticketRepository.countDoneTicketByWorkType("BACKEND", projectId);
+                Double frontendHours = ticketRepository.countAllTicketByWorkType("FRONTEND", projectId);
+                Double frontendHoursDone = ticketRepository.countDoneTicketByWorkType("FRONTEND", projectId);
+                Double designHours = ticketRepository.countAllTicketByWorkType("DESIGN", projectId);
+                Double designHoursDone = ticketRepository.countDoneTicketByWorkType("DESIGN", projectId);
                 ResProjectCondition res = new ResProjectCondition();
                 res.setId(project.get().getId());
                 res.setStartDate(project.get().getStartDate());
                 res.setEndDate(project.get().getEndDate());
-                if(backHours!=0){
-                    if(backHoursDone!=0){
-                        res.setBackend(backHoursDone / backHours);
+                if(backHours!=null){
+                    if(backHoursDone!=null){
+                        res.setBackend((backHoursDone / backHours)*100);
                     }else{
-                        res.setBackend(0L);
+                        res.setBackend(null);
                     }
                 }
-                if(frontendHours!=0){
-                    if(frontendHoursDone!=0){
-                        res.setFrontend(frontendHoursDone / frontendHours);
+                if(frontendHours!=null){
+                    if(frontendHoursDone!=null){
+                        res.setFrontend((frontendHoursDone / frontendHours)*100);
                     }else{
-                        res.setFrontend(0L);
+                        res.setFrontend(null);
                     }
                 }
-                if(designHours!=0){
-                    if(designHoursDone!=0){
-                        res.setDesign(designHoursDone / designHours);
+                if(designHours!=null){
+                    if(designHoursDone!=null){
+                        res.setDesign((designHoursDone / designHours)*100);
                     }else{
-                        res.setDesign(0L);
+                        res.setDesign(null);
                     }
                 }
 //                res.setAllPercentage((backHoursDone + frontendHoursDone + designHoursDone)/(backHours + frontendHours + designHours));
@@ -329,7 +329,7 @@ public class ProjectService {
         List<ResUser> all = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).getFields().size(); j++) {
-                if (list.get(i).getFields().get(j).getName() == workType) {
+                if (list.get(i).getFields().get(j).getName().equals(workType)) {
                     all.add(getUser(list.get(i)));
                 }
             }

@@ -53,15 +53,13 @@ public class CompanyService {
                           agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
                           .collect(Collectors.toList()));
         }
-//        else {
-//          apiResponseModel.setCode(HttpStatus.MULTI_STATUS.value());
-//          apiResponseModel.setMessage("bunaqa nomli company mavjud !");
-//          return apiResponseModel;
-//        }
+        companyRepository.save(company);
+        apiResponseModel.setCode(HttpStatus.OK.value());
+        apiResponseModel.setMessage("success");
+      }else{
+        apiResponseModel.setCode(207);
+        apiResponseModel.setMessage("name already exists");
       }
-      companyRepository.save(company);
-      apiResponseModel.setCode(HttpStatus.OK.value());
-      apiResponseModel.setMessage("success");
     } catch (Exception e) {
       apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
       apiResponseModel.setMessage("saqlashda xatolik");
