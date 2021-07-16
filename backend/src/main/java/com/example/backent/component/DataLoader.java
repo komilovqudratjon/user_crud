@@ -76,8 +76,7 @@ public class DataLoader implements CommandLineRunner {
               List.of(
                   userExperiencesRepository.save(
                       new UserExperience("postgres", 6L, TimeType.MONTH)),
-                  userExperiencesRepository.save(
-                      new UserExperience("postgres", 6L, TimeType.MONTH))),
+                  userExperiencesRepository.save(new UserExperience("java", 6L, TimeType.YEAR))),
               save1,
               null,
               passwordEncoder.encode("koinot"),
@@ -102,8 +101,7 @@ public class DataLoader implements CommandLineRunner {
                 List.of(
                     userExperiencesRepository.save(
                         new UserExperience("postgres", 6L, TimeType.MONTH)),
-                    userExperiencesRepository.save(
-                        new UserExperience("postgres", 6L, TimeType.MONTH))),
+                    userExperiencesRepository.save(new UserExperience("java", 6L, TimeType.YEAR))),
                 save1,
                 null,
                 passwordEncoder.encode("koinot"),

@@ -51,13 +51,11 @@ public class User extends AbsEntity implements UserDetails {
   @Column(nullable = false, unique = true)
   private String email; // REQUIRED
 
-  @Column(nullable = false)
-  @ManyToMany
-  private List<FieldsForUsers> fields; // REQUIRED
+  @ManyToMany private List<FieldsForUsers> fields; // REQUIRED
 
   @ManyToMany private List<UserExperience> experiences;
 
-  @ManyToMany private List<UsersLanguage> languages;
+  @ManyToMany() private List<UsersLanguage> languages;
 
   @ManyToMany private List<ProgramingLanguage> programingLanguages;
 

@@ -49,4 +49,6 @@ public class ReqUser {
   private String avatar;
 
   private List<Role> roles;
+
+  private boolean active;
 }

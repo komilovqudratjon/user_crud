@@ -2,6 +2,7 @@ package com.example.backent.security;
 
 import com.example.backent.entity.Attachment;
 import com.example.backent.entity.User;
+import com.example.backent.entity.UserExperience;
 import com.example.backent.entity.enums.AttachmentType;
 import com.example.backent.exception.ResourceException;
 import com.example.backent.payload.*;
@@ -154,8 +155,10 @@ public class AuthService implements UserDetailsService {
               reqSignUp.getEmail(),
               userFieldsRepository.findAllByIdIn(reqSignUp.getFields()),
               userExperiencesRepository.saveAll(reqSignUp.getExperiences()),
-              usersLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
-              programmingLanguageRepository.findAllByIdIn(reqSignUp.getLanguage()),
+              usersLanguageRepository.findAllByIdIn(reqSignUp.getLanguages()),
+              reqSignUp.getProgramingLanguages() == null
+                  ? null
+                  : programmingLanguageRepository.findAllByIdIn(reqSignUp.getProgramingLanguages()),
               passwordEncoder.encode(reqSignUp.getPassword()),
               reqSignUp.isActive(),
               roleRepository.findAllByNameIn(reqSignUp.getRoles()),
@@ -209,6 +212,24 @@ public class AuthService implements UserDetailsService {
             new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getStartWorkingTime()));
         user.setPhoneNumber(reqSignUp.getPhoneNumber());
         user.setEmail(reqSignUp.getEmail());
+        //        List<UserExperience> experiences = user.getExperiences( );
+        user.setFields(null);
+        user.setExperiences(null);
+        user.setLanguages(null);
+        user.setProgramingLanguages(null);
+        userRepository.save(user);
+        //        userExperiencesRepository.deleteAll( experiences );
+        user.setFields(userFieldsRepository.findAllByIdIn(reqSignUp.getFields()));
+        user.setExperiences(userExperiencesRepository.saveAll(reqSignUp.getExperiences()));
+        user.setLanguages(usersLanguageRepository.findAllByIdIn(reqSignUp.getLanguages()));
+        user.setProgramingLanguages(
+            reqSignUp.getProgramingLanguages() == null
+                ? null
+                : programmingLanguageRepository.findAllByIdIn(reqSignUp.getProgramingLanguages()));
+        if (reqSignUp.getPassword() != null && reqSignUp.getPassword().length() > 3) {
+          user.setPassword(passwordEncoder.encode(reqSignUp.getPassword()));
+        }
+        user.setRoles(roleRepository.findAllByNameIn(reqSignUp.getRoles()));
         user.setActive(reqSignUp.isActive());
         user.setAvatar(
             reqSignUp.getPhotoId() == null
@@ -233,7 +254,7 @@ public class AuthService implements UserDetailsService {
     userRepository.save(user);
     return ResponseEntity.status(HttpStatus.ACCEPTED)
         .body(
-            new ResourceException(
+            new ApiResponseModel(
                 HttpStatus.OK.value(),
                 info,
                 new ReqUser(
@@ -267,7 +288,8 @@ public class AuthService implements UserDetailsService {
                             .path("/api/attach/")
                             .path(user.getAvatar().getId().toString())
                             .toUriString(),
-                    user.getRoles())));
+                    user.getRoles(),
+                    user.isActive())));
   }
 
   public HttpEntity<?> getApiToken(String phoneNumber, String password) {
@@ -357,5 +379,26 @@ public class AuthService implements UserDetailsService {
       }
     }
     return ext;
+  }
+
+  public HttpEntity<?> deleteUser(Long id, User user) {
+    try {
+      if (user.getId().equals(id)) {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(), "not delete because it is you ", null));
+      }
+      userRepository.deleteById(id);
+      return ResponseEntity.status(HttpStatus.ACCEPTED)
+          .body(new ApiResponseModel(HttpStatus.ACCEPTED.value(), "delete user", null));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest()
+          .body(
+              new ApiResponseModel(
+                  HttpStatus.CONFLICT.value(),
+                  "not delete user because this user working a lot of project",
+                  null));
+    }
   }
 }

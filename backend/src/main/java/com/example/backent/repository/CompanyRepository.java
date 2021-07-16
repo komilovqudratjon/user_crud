@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    List<Company> findAllByDeleted(Boolean deleted);
+  List<Company> findAllByDeleted(Boolean deleted);
 
-    Company findByIdAndDeleted(Long id, boolean deleted);
+  Company findByIdAndDeleted(Long id, boolean deleted);
 
-    boolean existsByName(String name);
+  boolean existsByName(String name);
+
+  boolean existsByNameAndIdNot(String name, Long id);
 }

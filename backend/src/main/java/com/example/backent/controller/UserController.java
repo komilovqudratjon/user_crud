@@ -53,13 +53,29 @@ public class UserController {
     return userService.deleteDelete(id);
   }
 
+  // **************** GET USER BY ID ****************//
+  @GetMapping("/getUserById/{id}")
+  public HttpEntity<?> getUserById(@PathVariable Long id) {
+    return userService.getUserById(id);
+  }
+
   // **************  GET USER  ****************//
-  @GetMapping(params = {"sortBy", "page", "size"})
+  @GetMapping()
   public HttpEntity<?> findPaginated(
       @RequestParam("page") Optional<Integer> page,
       @RequestParam("size") Optional<Integer> size,
+      @RequestParam("sortBy") Optional<String> sortBy,
+      @RequestParam("search") Optional<String> search) {
+    return userService.getPageable(page, size, sortBy, search);
+  }
+
+  // **************  GET USER  ****************//
+  @GetMapping("/document")
+  public Object document(
+      @RequestParam("page") Optional<Integer> page,
+      @RequestParam("size") Optional<Integer> size,
       @RequestParam("sortBy") Optional<String> sortBy) {
-    return userService.getPageable(page, size, sortBy);
+    return userService.document(page, size, sortBy);
   }
 
   @ExceptionHandler

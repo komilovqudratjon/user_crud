@@ -36,6 +36,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Page<User> findAllByDeleted(boolean deleted, Pageable pageable);
 
+  Page<User>
+      findAllByDeletedAndFirstnameContainingOrLastnameContainingOrMiddlenameContainingOrAddressContainingOrPassportNumberContainingOrEmailContaining(
+          boolean deleted,
+          String firstname,
+          String lastname,
+          String middlename,
+          String address,
+          String passportNumber,
+          String email,
+          Pageable pageable);
+
   boolean existsByEmail(String email);
 
   boolean existsByEmailAndIdNot(String email, Long id);

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -86,11 +87,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return null;
       }
       if (isHandled(requestPath)) {
+        System.out.println(locations);
         return locations.stream()
             .map(loc -> createRelative(loc, requestPath))
             .filter(resource -> resource != null && resource.exists())
             .findFirst()
-            .orElseGet(null);
+            .orElseGet((Supplier<? extends Resource>) index);
       }
       return index;
     }

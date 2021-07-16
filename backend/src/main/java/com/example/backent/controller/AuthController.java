@@ -1,7 +1,6 @@
 package com.example.backent.controller;
 
 import com.example.backent.entity.User;
-import com.example.backent.exception.ResourceException;
 import com.example.backent.payload.ApiResponseModel;
 import com.example.backent.payload.ErrorsField;
 import com.example.backent.payload.ReqSignIn;
@@ -68,6 +67,12 @@ public class AuthController {
   @PostMapping("/uploadAvatar")
   public ApiResponseModel uploadFile(MultipartHttpServletRequest request) {
     return authService.uploadPhotoFileList(request);
+  }
+  // **************** USER DELETE ****************//
+  @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
+  @DeleteMapping("/deleteUser/{id}")
+  public HttpEntity<?> deleteUser(@CurrentUser User user, @PathVariable Long id) {
+    return authService.deleteUser(id, user);
   }
 
   // **************** LOGIN USER ****************//

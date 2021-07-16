@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

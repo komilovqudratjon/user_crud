@@ -23,7 +23,9 @@ import java.util.stream.Stream;
 public class CompanyService {
 
   @Autowired CompanyRepository companyRepository;
+
   @Autowired AgreementRepository agreementRepository;
+
   @Autowired AttachmentRepository attachmentRepository;
 
   public ApiResponseModel addOrEditCompany(ReqCompany reqCompany) {
@@ -34,32 +36,58 @@ public class CompanyService {
         Optional<Company> optionalCompany = companyRepository.findById(reqCompany.getId());
         if (optionalCompany.isPresent()) {
           company = optionalCompany.get();
-        }
-      }
-      if (!companyRepository.existsByName(reqCompany.getName())) {
-        company.setName(reqCompany.getName());
-        company.setResponsiblePerson(reqCompany.getResponsiblePerson());
-        company.setBalance(reqCompany.getBalance());
-        company.setOked(reqCompany.getOked());
-        company.setMfo(reqCompany.getMfo());
-        company.setStir(reqCompany.getStir());
-        company.setPhoneNumber(reqCompany.getPhoneNumber());
-        company.setEmail(reqCompany.getEmail());
-        company.setAddress(reqCompany.getAddress());
-        if (reqCompany.getDeleteFile() != null) {
-          company.setAgreement(
+          if (!companyRepository.existsByName(reqCompany.getName())) {
+            company.setName(reqCompany.getName());
+            company.setResponsiblePerson(reqCompany.getResponsiblePerson());
+            company.setBalance(reqCompany.getBalance());
+            company.setOked(reqCompany.getOked());
+            company.setMfo(reqCompany.getMfo());
+            company.setStir(reqCompany.getStir());
+            company.setPhoneNumber(reqCompany.getPhoneNumber());
+            company.setEmail(reqCompany.getEmail());
+            company.setAddress(reqCompany.getAddress());
+            if (reqCompany.getDeleteFile() != null) {
+              company.setAgreement(
                   Stream.concat(
                           company.getAgreement().stream(),
                           agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
-                          .collect(Collectors.toList()));
+                      .collect(Collectors.toList()));
+            }
+            companyRepository.save(company);
+            apiResponseModel.setCode(HttpStatus.OK.value());
+            apiResponseModel.setMessage("success");
+          } else {
+            apiResponseModel.setCode(207);
+            apiResponseModel.setMessage("name already exists");
+          }
         }
-        companyRepository.save(company);
-        apiResponseModel.setCode(HttpStatus.OK.value());
-        apiResponseModel.setMessage("success");
-      }else{
-        apiResponseModel.setCode(207);
-        apiResponseModel.setMessage("name already exists");
+      } else {
+        if (!companyRepository.existsByNameAndIdNot(reqCompany.getName(), reqCompany.getId())) {
+          company.setName(reqCompany.getName());
+          company.setResponsiblePerson(reqCompany.getResponsiblePerson());
+          company.setBalance(reqCompany.getBalance());
+          company.setOked(reqCompany.getOked());
+          company.setMfo(reqCompany.getMfo());
+          company.setStir(reqCompany.getStir());
+          company.setPhoneNumber(reqCompany.getPhoneNumber());
+          company.setEmail(reqCompany.getEmail());
+          company.setAddress(reqCompany.getAddress());
+          if (reqCompany.getDeleteFile() != null) {
+            company.setAgreement(
+                Stream.concat(
+                        company.getAgreement().stream(),
+                        agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
+                    .collect(Collectors.toList()));
+          }
+          companyRepository.save(company);
+          apiResponseModel.setCode(HttpStatus.OK.value());
+          apiResponseModel.setMessage("success");
+        } else {
+          apiResponseModel.setCode(207);
+          apiResponseModel.setMessage("name already exists");
+        }
       }
+
     } catch (Exception e) {
       apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
       apiResponseModel.setMessage("saqlashda xatolik");
@@ -93,7 +121,10 @@ public class CompanyService {
   public ApiResponseModel getAllCompany() {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      List<ResCompany> companyList = companyRepository.findAllByDeleted(false).stream().map(this::getCompany).collect(Collectors.toList());
+      List<ResCompany> companyList =
+          companyRepository.findAllByDeleted(false).stream()
+              .map(this::getCompany)
+              .collect(Collectors.toList());
       response.setCode(HttpStatus.OK.value());
       response.setMessage("success");
       response.setData(companyList);
@@ -107,7 +138,8 @@ public class CompanyService {
   public ApiResponseModel getOneCompany(Long companyId) {
     ApiResponseModel response = new ApiResponseModel();
     try {
-      Optional<Company> optionalCompany = Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
+      Optional<Company> optionalCompany =
+          Optional.ofNullable(companyRepository.findByIdAndDeleted(companyId, false));
       if (optionalCompany.isPresent()) {
         response.setData(getCompany(optionalCompany.get()));
         response.setCode(HttpStatus.OK.value());
@@ -123,28 +155,32 @@ public class CompanyService {
     return response;
   }
 
-  public ResCompany getCompany(Company company){
+  public ResCompany getCompany(Company company) {
     return new ResCompany(
-            company.getId(),
-            company.getName(),
-            company.getResponsiblePerson(),
-            company.getBalance(),
-            company.getOked(),
-            company.getMfo(),
-            company.getStir(),
-            company.getPhoneNumber(),
-            company.getEmail(),
-            company.getAddress(),
-            company.getAgreement()!=null?company.getAgreement().stream().map(this::getAgreement).collect(Collectors.toList()):null
-    );
+        company.getId(),
+        company.getName(),
+        company.getResponsiblePerson(),
+        company.getBalance(),
+        company.getOked(),
+        company.getMfo(),
+        company.getStir(),
+        company.getPhoneNumber(),
+        company.getEmail(),
+        company.getAddress(),
+        company.getAgreement() != null
+            ? company.getAgreement().stream().map(this::getAgreement).collect(Collectors.toList())
+            : null);
   }
 
-  public ResAgreement getAgreement(Agreement agreement){
+  public ResAgreement getAgreement(Agreement agreement) {
     return new ResAgreement(
-            agreement.getId(),
-            agreement.getWhy(),
-            agreement.getAFile()!=null?ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/attach/").path(agreement.getAFile().getId().toString()).toUriString():null
-    );
+        agreement.getId(),
+        agreement.getWhy(),
+        agreement.getAFile() != null
+            ? ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/attach/")
+                .path(agreement.getAFile().getId().toString())
+                .toUriString()
+            : null);
   }
-
 }

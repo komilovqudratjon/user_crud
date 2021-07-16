@@ -1,14 +1,13 @@
 package com.example.backent.Test;
 
-import com.example.backent.entity.enums.RoleName;
+import com.example.backent.service.GenerationTzPDF;
+import com.itextpdf.text.DocumentException;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Test {
-  public static void main(String[] args) {
-
-    String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-    System.out.println(date);
+  public static void main(String[] args) throws DocumentException, IOException, URISyntaxException {
+    new GenerationTzPDF().generationPDF("this is tz");
   }
 }

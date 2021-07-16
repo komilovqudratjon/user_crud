@@ -1,12 +1,17 @@
 package com.example.backent.payload;
 
-import java.util.List;
-
 import lombok.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public @Getter @Setter @AllArgsConstructor @NoArgsConstructor class UserPageable {
+import java.util.List;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class UserPageable {
   private int number;
   private boolean last;
   private int size;
@@ -15,7 +20,7 @@ public @Getter @Setter @AllArgsConstructor @NoArgsConstructor class UserPageable
   private Pageable pageable;
   private Sort sort;
   private boolean first;
-  private int totalElements;
+  private long totalElements;
   private boolean empty;
   private List<ReqUser> content;
 }

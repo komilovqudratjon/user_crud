@@ -43,7 +43,7 @@ public class ReqSignUp {
   private String phoneNumber;
 
   @Pattern(
-      regexp = "^(((19|2[0-9])[0-9]{2})-(0[13578]|10|12)-(0[1-9]|[12][0-9]|3[01]))$",
+      regexp = "^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$",
       message = "date Of Birthis invalid")
   private String dateOfBirth;
 
@@ -52,8 +52,6 @@ public class ReqSignUp {
   @Pattern(regexp = "[A-Z]{2}[0-9]{7}", message = "passport number is invalid")
   private String passportNumber;
 
-  @NotNull(message = "password mus be not null")
-  @NotBlank(message = "password is empty")
   @Length(min = 4, max = 30, message = "password is invalid length is min = 4 max = 30")
   private String password;
 
@@ -61,13 +59,13 @@ public class ReqSignUp {
   private boolean active;
 
   @Pattern(
-      regexp = "^(((19|2[0-9])[0-9]{2})-(0[13578]|10|12)-(0[1-9]|[12][0-9]|3[01]))$",
+      regexp = "^\\d\\d\\d\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])$",
       message = "startWorkingTime is invalid")
   private String startWorkingTime;
 
   private WorkTimeType workTimeType;
   private Family family;
-  private List<Long> language;
+  private List<Long> languages;
   private Long photoId;
   @NotNull private List<Long> fields;
   private List<UserExperience> experiences; // gson
