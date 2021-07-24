@@ -2,22 +2,20 @@ package com.example.backent.service;
 
 import com.example.backent.entity.Agreement;
 import com.example.backent.entity.Company;
-import com.example.backent.payload.ApiResponseModel;
-import com.example.backent.payload.ReqCompany;
-import com.example.backent.payload.ResAgreement;
-import com.example.backent.payload.ResCompany;
+import com.example.backent.payload.*;
 import com.example.backent.repository.AgreementRepository;
 import com.example.backent.repository.AttachmentRepository;
 import com.example.backent.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class CompanyService {
@@ -28,71 +26,62 @@ public class CompanyService {
 
   @Autowired AttachmentRepository attachmentRepository;
 
-  public ApiResponseModel addOrEditCompany(ReqCompany reqCompany) {
-    ApiResponseModel apiResponseModel = new ApiResponseModel();
-    Company company = new Company();
-    try {
-      if (reqCompany.getId() != null) {
-        Optional<Company> optionalCompany = companyRepository.findById(reqCompany.getId());
-        if (optionalCompany.isPresent()) {
-          company = optionalCompany.get();
-          if (!companyRepository.existsByName(reqCompany.getName())) {
-            company.setName(reqCompany.getName());
-            company.setResponsiblePerson(reqCompany.getResponsiblePerson());
-            company.setBalance(reqCompany.getBalance());
-            company.setOked(reqCompany.getOked());
-            company.setMfo(reqCompany.getMfo());
-            company.setStir(reqCompany.getStir());
-            company.setPhoneNumber(reqCompany.getPhoneNumber());
-            company.setEmail(reqCompany.getEmail());
-            company.setAddress(reqCompany.getAddress());
-            if (reqCompany.getDeleteFile() != null) {
-              company.setAgreement(
-                  Stream.concat(
-                          company.getAgreement().stream(),
-                          agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
-                      .collect(Collectors.toList()));
-            }
-            companyRepository.save(company);
-            apiResponseModel.setCode(HttpStatus.OK.value());
-            apiResponseModel.setMessage("success");
-          } else {
-            apiResponseModel.setCode(207);
-            apiResponseModel.setMessage("name already exists");
-          }
-        }
-      } else {
-        if (!companyRepository.existsByNameAndIdNot(reqCompany.getName(), reqCompany.getId())) {
-          company.setName(reqCompany.getName());
-          company.setResponsiblePerson(reqCompany.getResponsiblePerson());
-          company.setBalance(reqCompany.getBalance());
-          company.setOked(reqCompany.getOked());
-          company.setMfo(reqCompany.getMfo());
-          company.setStir(reqCompany.getStir());
-          company.setPhoneNumber(reqCompany.getPhoneNumber());
-          company.setEmail(reqCompany.getEmail());
-          company.setAddress(reqCompany.getAddress());
-          if (reqCompany.getDeleteFile() != null) {
-            company.setAgreement(
-                Stream.concat(
-                        company.getAgreement().stream(),
-                        agreementRepository.findAllByIdIn(reqCompany.getDeleteFile()).stream())
-                    .collect(Collectors.toList()));
-          }
-          companyRepository.save(company);
-          apiResponseModel.setCode(HttpStatus.OK.value());
-          apiResponseModel.setMessage("success");
-        } else {
-          apiResponseModel.setCode(207);
-          apiResponseModel.setMessage("name already exists");
-        }
+  public HttpEntity<?> addOrEditCompany(ReqCompany reqCompany) {
+    if (reqCompany.getId() == null) {
+      if (companyRepository.existsByName(reqCompany.getName())) {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(),
+                    "field",
+                    List.of(new ErrorsField("name", "this name is busy"))));
       }
 
-    } catch (Exception e) {
-      apiResponseModel.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-      apiResponseModel.setMessage("saqlashda xatolik");
+      Company company = new Company();
+      company.setName(reqCompany.getName());
+      company.setResponsiblePerson(reqCompany.getResponsiblePerson());
+      company.setBalance(reqCompany.getBalance());
+      company.setOked(reqCompany.getOked());
+      company.setMfo(reqCompany.getMfo());
+      company.setStir(reqCompany.getStir());
+      company.setPhoneNumber(reqCompany.getPhoneNumber());
+      company.setEmail(reqCompany.getEmail());
+      company.setAddress(reqCompany.getAddress());
+      Company save = companyRepository.save(company);
+      return ResponseEntity.status(HttpStatus.ACCEPTED)
+          .body(new ApiResponseModel(HttpStatus.OK.value(), "save", save));
+    } else {
+      Optional<Company> optionalCompany = companyRepository.findById(reqCompany.getId());
+      if (optionalCompany.isPresent()) {
+        if (companyRepository.existsByNameAndIdNot(reqCompany.getName(), reqCompany.getId())) {
+          return ResponseEntity.badRequest()
+              .body(
+                  new ApiResponseModel(
+                      HttpStatus.CONFLICT.value(),
+                      "field",
+                      List.of(new ErrorsField("name", "this name is busy"))));
+        }
+        Company company = optionalCompany.get();
+        company.setName(reqCompany.getName());
+        company.setResponsiblePerson(reqCompany.getResponsiblePerson());
+        company.setBalance(reqCompany.getBalance());
+        company.setOked(reqCompany.getOked());
+        company.setMfo(reqCompany.getMfo());
+        company.setStir(reqCompany.getStir());
+        company.setPhoneNumber(reqCompany.getPhoneNumber());
+        company.setEmail(reqCompany.getEmail());
+        company.setAddress(reqCompany.getAddress());
+        Company save = companyRepository.save(company);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+            .body(new ApiResponseModel(HttpStatus.OK.value(), "edit", save));
+      }
+      return ResponseEntity.badRequest()
+          .body(
+              new ApiResponseModel(
+                  HttpStatus.CONFLICT.value(),
+                  "field",
+                  List.of(new ErrorsField("id", "id not found"))));
     }
-    return apiResponseModel;
   }
 
   public ApiResponseModel deleteCompany(Long companyId) {

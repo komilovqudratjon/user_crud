@@ -8,6 +8,8 @@ import com.example.backent.payload.ReqSignUp;
 import com.example.backent.security.AuthService;
 import com.example.backent.security.CurrentUser;
 import com.example.backent.security.JwtTokenProvider;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
@@ -36,7 +39,18 @@ public class AuthController {
 
   // **************** GET  YOURSELF  ****************//
   @GetMapping("/me")
-  public ApiResponseModel getUser(@CurrentUser User user) {
+  //  @ApiOperation(value = "Get list of Students in the System ", response = Iterable.class, tags =
+  // "getStudents")
+  @ApiImplicitParams(
+      @ApiImplicitParam(
+          name = "Authorization",
+          value = "Access Token",
+          required = true,
+          allowEmptyValue = false,
+          paramType = "header",
+          dataTypeClass = String.class,
+          example = "Bearer access_token"))
+  public ApiResponseModel getUser(@ApiIgnore @CurrentUser User user) {
     return new ApiResponseModel(
         user != null ? 200 : 204, user != null ? "user info" : "Error", user);
   }
@@ -68,10 +82,11 @@ public class AuthController {
   public ApiResponseModel uploadFile(MultipartHttpServletRequest request) {
     return authService.uploadPhotoFileList(request);
   }
+
   // **************** USER DELETE ****************//
   @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
   @DeleteMapping("/deleteUser/{id}")
-  public HttpEntity<?> deleteUser(@CurrentUser User user, @PathVariable Long id) {
+  public HttpEntity<?> deleteUser(@ApiIgnore @CurrentUser User user, @PathVariable Long id) {
     return authService.deleteUser(id, user);
   }
 

@@ -24,30 +24,18 @@ import java.util.stream.Collectors;
 public class UserService {
   private final UserRepository userRepository;
 
-  private final RoleRepository roleRepository;
-
   private final UserFieldsRepository userFieldsRepository;
 
-  private final UserExperiencesRepository userExperiencesRepository;
-
   private final UserLanguageRepository usersLanguageRepository;
-
-  private final ProgrammingLanguageRepository programmingLanguageRepository;
 
   @Autowired
   public UserService(
       UserRepository userRepository,
-      RoleRepository roleRepository,
       UserFieldsRepository userFieldsRepository,
-      UserExperiencesRepository userExperiencesRepository,
-      UserLanguageRepository usersLanguageRepository,
-      ProgrammingLanguageRepository programmingLanguageRepository) {
+      UserLanguageRepository usersLanguageRepository) {
     this.userRepository = userRepository;
-    this.roleRepository = roleRepository;
     this.userFieldsRepository = userFieldsRepository;
-    this.userExperiencesRepository = userExperiencesRepository;
     this.usersLanguageRepository = usersLanguageRepository;
-    this.programmingLanguageRepository = programmingLanguageRepository;
   }
 
   public ApiResponseModel saveLanguage(String language) {

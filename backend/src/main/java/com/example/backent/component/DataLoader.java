@@ -5,6 +5,7 @@ import com.example.backent.entity.enums.Family;
 import com.example.backent.entity.enums.RoleName;
 import com.example.backent.entity.enums.TimeType;
 import com.example.backent.entity.enums.WorkTimeType;
+import com.example.backent.payload.ErrorsField;
 import com.example.backent.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.sql.Array;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -35,8 +37,25 @@ public class DataLoader implements CommandLineRunner {
 
   @Autowired UserExperiencesRepository userExperiencesRepository;
 
+  @Autowired ProjectRepository projectRepository;
+
+  @Autowired BoardRepository boardRepository;
+
+  @Autowired TicketRepository ticketRepository;
+
+  @Autowired CompanyRepository companyRepository;
+
   @Override
   public void run(String... args) {
+
+    //    testRepository.save( new TestArrayJson( "koinot" ,new ErrorsField[]{new ErrorsField(
+    // "ghjrtfgh","hrthrth" )}));
+    //    testRepository.save( new TestArrayJson( "koinot1" ,new ErrorsField[]{new ErrorsField(
+    // "dfhd","ghdfhgdf" )}));
+    //    testRepository.save( new TestArrayJson( "koinot2" ,new ErrorsField[]{new ErrorsField(
+    // "dfhdfh","dfghdfgh" )}));
+    //    testRepository.save( new TestArrayJson( "koinot3" ,new ErrorsField[]{new ErrorsField(
+    // "trurtujrt","dghdrfg" )}));
 
     if (roleRepository.count() == 0) {
       int i = 1;
