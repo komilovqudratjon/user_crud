@@ -1,5 +1,6 @@
 package com.example.backent.entity;
 
+import com.example.backent.entity.template.AbsEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,12 +15,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Tag {
+public class Tag extends AbsEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-
+  private String name;
 }

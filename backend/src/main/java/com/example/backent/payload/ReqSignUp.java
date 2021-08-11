@@ -37,9 +37,7 @@ public class ReqSignUp {
 
   @NotNull
   @NotBlank()
-  @Pattern(
-      regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-      message = "telephone number is invalid")
+  @Pattern(regexp = "^[+][9][9][8][0-9]{9}$", message = "telephone number is invalid")
   private String phoneNumber;
 
   @Pattern(

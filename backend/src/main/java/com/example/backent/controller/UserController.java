@@ -1,13 +1,19 @@
 package com.example.backent.controller;
 
 import com.example.backent.payload.ApiResponseModel;
+import com.example.backent.payload.ErrorsField;
 import com.example.backent.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Optional;
 
 @RestController
@@ -61,11 +67,25 @@ public class UserController {
 
   // **************  GET USER  ****************//
   @GetMapping()
+  //  @Validated
   public HttpEntity<?> findPaginated(
-      @RequestParam("page") Optional<Integer> page,
-      @RequestParam("size") Optional<Integer> size,
-      @RequestParam("sortBy") Optional<String> sortBy,
-      @RequestParam("search") Optional<String> search) {
+      @Valid @RequestParam(value = "page", defaultValue = "0") @Min(0) Optional<Integer> page,
+      @Valid @RequestParam(value = "size", defaultValue = "5") @Min(0) Optional<Integer> size,
+      @Valid @RequestParam(value = "sortBy", defaultValue = "id") Optional<String> sortBy,
+      @Valid @RequestParam("search") Optional<String> search) {
+    //    if (error.hasErrors()) {
+    //      return ResponseEntity.status(HttpStatus.CONFLICT)
+    //          .body(
+    //              new ApiResponseModel(
+    //                  HttpStatus.CONFLICT.value(),
+    //                  "field",
+    //                  error.getFieldErrors().stream()
+    //                      .map(
+    //                          fieldError ->
+    //                              new ErrorsField(
+    //                                  fieldError.getField(), fieldError.getDefaultMessage()))));
+    //    }
+
     return userService.getPageable(page, size, sortBy, search);
   }
 

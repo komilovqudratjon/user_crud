@@ -1,10 +1,14 @@
 package com.example.backent.service;
 
+import com.example.backent.entity.Project;
+import com.example.backent.entity.Ticket;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.EOFException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -18,46 +22,80 @@ public class GenerationTzPDF {
   private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
   private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 
-  public void generationPDF(String projectName) throws IOException, DocumentException {
+  public static File generationPDF(Project project, java.util.List<Ticket> ticket)
+      throws IOException {
     System.out.println(new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date()));
-    //    Document document = new Document();
-    //
-    //    PdfWriter instance = PdfWriter.getInstance( document,new FileOutputStream( "tz.pdf" ) );
-    //    Rectangle rectangle = new Rectangle(30, 30, 550, 800);
-    //    instance.setBoxSize("rectangle", rectangle);
-    //    document.open();
-    //
-    //    document.add( new Chunk(
-    //            new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date()),
-    //            FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.BLACK)));
-    //    document.add(Chunk.NEWLINE);
-    //
-    //
-    //
-    ////    Chunk chunk = new Chunk( System.lineSeparator( ) + projectName,
-    ////            FontFactory.getFont( FontFactory.COURIER,20,1,BaseColor.BLACK ) );
-    ////    document.add( chunk );
-    //
-    //    Rectangle rect = instance.getBoxSize("rectangle");
-    //
-    //    ColumnText.showTextAligned(instance.getDirectContent(),
-    //            Element.ALIGN_CENTER, new Phrase("BOTTOM MEDIUM"),
-    //            rect.getRight() / 2, rect.getBottom(), 0);
-    //
-    //
-    //
-    //    document.close();
-
     try {
       Document document = new Document();
-      PdfWriter.getInstance(document, new FileOutputStream(FILE));
+      FileOutputStream fileOutputStream = new FileOutputStream(FILE);
+      PdfWriter.getInstance(document, fileOutputStream);
       document.open();
-      addMetaData(document, projectName);
+      addMetaData(document, project.getName());
       addTitlePage(document);
-      addContent(document);
+      //      addContent(document);
+      addTicket(document, ticket);
       document.close();
+      return new File(FILE);
     } catch (Exception e) {
-      e.printStackTrace();
+      throw new EOFException("String can not be empty!");
+    }
+  }
+
+  private static void addTicket(Document document, java.util.List<Ticket> ticket)
+      throws DocumentException {
+    for (Ticket t : ticket) {
+      Anchor anchor = new Anchor(t.getText(), catFont);
+
+      // Second parameter is the number of the chapter
+      Chapter catPart = new Chapter(new Paragraph(anchor), 1);
+
+      Paragraph subPara = null;
+      Section subCatPart = catPart.addSection((Paragraph) null);
+      subCatPart.add(new Paragraph(t.getTag() != null ? t.getTag().getName() : ""));
+
+      subPara = new Paragraph("working users", subFont);
+      subCatPart = catPart.addSection(subPara);
+      subCatPart.add(
+          new Paragraph(" Pm :" + t.getPm().getFirstname() + " " + t.getPm().getLastname()));
+      subCatPart.add(
+          new Paragraph(
+              " Worker :"
+                  + t.getWorker().getFirstname()
+                  + " "
+                  + t.getWorker().getLastname()
+                  + "     time :"
+                  + t.getHoursWorker()));
+      subCatPart.add(
+          new Paragraph(
+              " Tester :"
+                  + t.getTester().getFirstname()
+                  + " "
+                  + t.getTester().getLastname()
+                  + "     time :"
+                  + t.getHoursTester()));
+
+      // add a list
+      //      createList(subCatPart);
+      Paragraph paragraph = new Paragraph();
+      //      addEmptyLine(paragraph, 5);
+      subCatPart.add(paragraph);
+
+      // now add all this to the document
+      document.add(catPart);
+
+      // Next section
+      //      anchor = new Anchor("Second Chapter", catFont);
+      //      anchor.setName("Second Chapter");
+
+      // Second parameter is the number of the chapter
+      //      catPart = new Chapter(new Paragraph(anchor), 1);
+
+      //      subPara = new Paragraph("Subcategory", subFont);
+      //      subCatPart = catPart.addSection(subPara);
+      //      subCatPart.add(new Paragraph("This is a very important message"));
+
+      // now add all this to the document
+      document.add(catPart);
     }
   }
 
@@ -75,7 +113,7 @@ public class GenerationTzPDF {
   private static void addTitlePage(Document document) throws DocumentException {
     Paragraph preface = new Paragraph();
     // We add one empty line
-    addEmptyLine(preface, 5);
+    //    addEmptyLine(preface, 5);
     // Lets write a big header
     preface.add(new Paragraph("this is tz", catFont));
 
@@ -92,7 +130,7 @@ public class GenerationTzPDF {
     preface.add(
         new Paragraph("This document describes something which is very important ", smallBold));
 
-    addEmptyLine(preface, 8);
+    //    addEmptyLine(preface, 8);
 
     preface.add(
         new Paragraph(
@@ -117,11 +155,6 @@ public class GenerationTzPDF {
 
     subPara = new Paragraph("Subcategory 2", subFont);
     subCatPart = catPart.addSection(subPara);
-    subCatPart.add(new Paragraph("Paragraph 1"));
-    subCatPart.add(new Paragraph("Paragraph 2"));
-    subCatPart.add(new Paragraph("Paragraph 3"));
-
-    // add a list
     createList(subCatPart);
     Paragraph paragraph = new Paragraph();
     addEmptyLine(paragraph, 5);
@@ -134,15 +167,15 @@ public class GenerationTzPDF {
     document.add(catPart);
 
     // Next section
-    anchor = new Anchor("Second Chapter", catFont);
-    anchor.setName("Second Chapter");
+    //    anchor = new Anchor("Second Chapter", catFont);
+    //    anchor.setName("Second Chapter");
 
     // Second parameter is the number of the chapter
-    catPart = new Chapter(new Paragraph(anchor), 1);
+    //    catPart = new Chapter(new Paragraph(anchor), 1);
 
-    subPara = new Paragraph("Subcategory", subFont);
-    subCatPart = catPart.addSection(subPara);
-    subCatPart.add(new Paragraph("This is a very important message"));
+    //    subPara = new Paragraph("Subcategory", subFont);
+    //    subCatPart = catPart.addSection(subPara);
+    //    subCatPart.add(new Paragraph("This is a very important message"));
 
     // now add all this to the document
     document.add(catPart);

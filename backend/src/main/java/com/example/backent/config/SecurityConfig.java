@@ -22,7 +22,6 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 @Configuration
 @EnableWebSecurity
@@ -117,7 +116,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/company/**",
             "/api/project/**",
             "/api/agreement/**",
-            "/api/project/type/**")
+            "/actuator/**",
+            "/api/project/type/**",
+            "/api/project/generateTz/**")
         .permitAll()
         .antMatchers("/api/**")
         .authenticated();

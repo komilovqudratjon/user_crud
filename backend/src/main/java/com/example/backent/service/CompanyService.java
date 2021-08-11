@@ -48,7 +48,7 @@ public class CompanyService {
       company.setEmail(reqCompany.getEmail());
       company.setAddress(reqCompany.getAddress());
       Company save = companyRepository.save(company);
-      return ResponseEntity.status(HttpStatus.ACCEPTED)
+      return ResponseEntity.status(HttpStatus.OK)
           .body(new ApiResponseModel(HttpStatus.OK.value(), "save", save));
     } else {
       Optional<Company> optionalCompany = companyRepository.findById(reqCompany.getId());
@@ -72,7 +72,7 @@ public class CompanyService {
         company.setEmail(reqCompany.getEmail());
         company.setAddress(reqCompany.getAddress());
         Company save = companyRepository.save(company);
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
+        return ResponseEntity.status(HttpStatus.OK)
             .body(new ApiResponseModel(HttpStatus.OK.value(), "edit", save));
       }
       return ResponseEntity.badRequest()

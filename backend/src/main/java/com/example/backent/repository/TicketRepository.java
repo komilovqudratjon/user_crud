@@ -55,5 +55,13 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
       nativeQuery = true)
   Double countDoneTicketByWorkType(@Param("type") String type, @Param("id") Long id);
 
+  // ************** get ticket by board_id ******************//
   List<Ticket> findAllByBoardId(Long board_id);
+
+  // ************** get ticket by project_id ******************//
+  @Query(
+      value =
+          "select * from ticket t where t.board_id IN (SELECT id FROM board b WHERE b.project_id=:project_id) ORDER BY t.id DESC",
+      nativeQuery = true)
+  List<Ticket> findAllByProject_id11(@Param("project_id") Long project_id);
 }

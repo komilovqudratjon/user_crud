@@ -252,7 +252,7 @@ public class AuthService implements UserDetailsService {
         reqSignUp.getPassword());
 
     userRepository.save(user);
-    return ResponseEntity.status(HttpStatus.ACCEPTED)
+    return ResponseEntity.status(HttpStatus.OK)
         .body(
             new ApiResponseModel(
                 HttpStatus.OK.value(),
@@ -390,8 +390,8 @@ public class AuthService implements UserDetailsService {
                     HttpStatus.CONFLICT.value(), "not delete because it is you ", null));
       }
       userRepository.deleteById(id);
-      return ResponseEntity.status(HttpStatus.ACCEPTED)
-          .body(new ApiResponseModel(HttpStatus.ACCEPTED.value(), "delete user", null));
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new ApiResponseModel(HttpStatus.OK.value(), "delete user", null));
     } catch (Exception e) {
       return ResponseEntity.badRequest()
           .body(

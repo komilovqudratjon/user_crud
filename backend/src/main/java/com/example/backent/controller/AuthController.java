@@ -73,6 +73,7 @@ public class AuthController {
                               new ErrorsField(
                                   fieldError.getField(), fieldError.getDefaultMessage()))));
     }
+
     return authService.register(reqSignUp);
   }
 
@@ -95,7 +96,7 @@ public class AuthController {
   @PostMapping("/login")
   public HttpEntity<?> login(@Valid @RequestBody ReqSignIn reqSignIn) {
     try {
-      return ResponseEntity.status(HttpStatus.ACCEPTED)
+      return ResponseEntity.status(HttpStatus.OK)
           .body(
               new ApiResponseModel(
                   HttpStatus.OK.value(),

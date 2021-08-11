@@ -18,32 +18,33 @@ import javax.persistence.*;
 public class Ticket extends AbsEntity {
 
   @Enumerated(EnumType.STRING)
-  private WorkType workType;
+  private WorkType workType; // **
 
-  private String text;
+  @Column(length = 10000)
+  private String text; // **
 
-  @OneToOne private User worker;
+  @OneToOne private User worker; // **
 
-  @OneToOne private User pm;
+  @OneToOne private User pm; // **
 
-  @OneToOne private User tester;
+  @OneToOne private User tester; // **
 
-  private Long hoursWorker;
+  private Long hoursWorker; // **
 
-  private Long hoursTester;
+  private Long hoursTester; // **
 
-  @ManyToOne private Board board;
+  @ManyToOne private Board board; // **
 
-  @ManyToOne private ProgramingLanguage programingLanguage;
+  @ManyToOne private ProgramingLanguage programingLanguage; // *
 
-  @OneToOne private CompleteQuestion completeQuestion;
+  @OneToOne private CompleteQuestion completeQuestion; // **
 
   private boolean deleted;
 
-  @ManyToOne private ProjectType projectType;
+  @ManyToOne private ProjectType projectType; // **
 
   @Enumerated(EnumType.STRING)
-  private TicketCondition ticketCondition;
+  private TicketCondition ticketCondition; // **
 
-  @ManyToOne private Tag tag;
+  @ManyToOne private Tag tag; //
 }

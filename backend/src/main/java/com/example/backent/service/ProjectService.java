@@ -4,10 +4,19 @@ import com.example.backent.entity.*;
 import com.example.backent.entity.enums.BoardCondition;
 import com.example.backent.payload.*;
 import com.example.backent.repository.*;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +77,11 @@ public class ProjectService {
         project.setEndDate(reqProject.getEndDate());
         project.setName(reqProject.getName());
         Project project1 = projectRepository.save(project);
-        boardRepository.save(new Board("name1", project1, 1l, BoardCondition.CREATED));
-        boardRepository.save(new Board("name2", project1, 2l, BoardCondition.ATTACHED));
-        boardRepository.save(new Board("name3", project1, 3l, BoardCondition.PROCESS));
-        boardRepository.save(new Board("name4", project1, 4l, BoardCondition.TEST));
-        boardRepository.save(new Board("name5", project1, 5l, BoardCondition.DONE));
+        boardRepository.save(new Board("name1", project1, 1L, BoardCondition.CREATED));
+        boardRepository.save(new Board("name2", project1, 2L, BoardCondition.ATTACHED));
+        boardRepository.save(new Board("name3", project1, 3L, BoardCondition.PROCESS));
+        boardRepository.save(new Board("name4", project1, 4L, BoardCondition.TEST));
+        boardRepository.save(new Board("name5", project1, 5L, BoardCondition.DONE));
       } else {
         apiResponseModel.setCode(205);
         apiResponseModel.setMessage("bunaqa idlik companiya mavjud emas");
@@ -355,5 +364,31 @@ public class ProjectService {
                 .path(user.getAvatar().getId().toString())
                 .toUriString()
             : null);
+  }
+
+  public HttpEntity<?> getTickets(Long id) {
+    try {
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(
+              new ApiResponseModel(
+                  HttpStatus.OK.value(), "here it is", ticketRepository.findAllByProject_id11(id)));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest()
+          .body(
+              new ApiResponseModel(
+                  HttpStatus.CONFLICT.value(),
+                  "field",
+                  List.of(new ErrorsField("error", "undefined mistake"))));
+    }
+  }
+
+  public HttpEntity<?> generateTz(Long id) throws IOException {
+    Project project = projectRepository.getById(id);
+    List<Ticket> ticketList = ticketRepository.findAllByProject_id11(id);
+    File document = GenerationTzPDF.generationPDF(project, ticketList);
+    return ResponseEntity.ok()
+        .contentType(
+            MediaType.parseMediaType(Files.probeContentType(Path.of(document.getAbsolutePath()))))
+        .body(Files.readAllBytes(Path.of(document.getAbsolutePath())));
   }
 }

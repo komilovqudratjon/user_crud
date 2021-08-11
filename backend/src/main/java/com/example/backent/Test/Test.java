@@ -8,6 +8,6 @@ import java.net.URISyntaxException;
 
 public class Test {
   public static void main(String[] args) throws DocumentException, IOException, URISyntaxException {
-    new GenerationTzPDF().generationPDF("this is tz");
+    //     GenerationTzPDF.generationPDF("this is tz");
   }
 }

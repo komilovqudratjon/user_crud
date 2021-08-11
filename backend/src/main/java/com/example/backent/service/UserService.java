@@ -183,7 +183,7 @@ public class UserService {
                           user.getRoles(),
                           user.isActive()))
               .collect(Collectors.toList()));
-      return ResponseEntity.status(HttpStatus.ACCEPTED)
+      return ResponseEntity.status(HttpStatus.OK)
           .body(new ApiResponseModel(HttpStatus.OK.value(), "users", userPageable));
     } catch (Exception e) {
       return ResponseEntity.badRequest()
@@ -206,7 +206,7 @@ public class UserService {
       Optional<User> byId = userRepository.findById(id);
       if (byId.isPresent()) {
         User user = byId.get();
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
+        return ResponseEntity.status(HttpStatus.OK)
             .body(
                 new ApiResponseModel(
                     HttpStatus.OK.value(),

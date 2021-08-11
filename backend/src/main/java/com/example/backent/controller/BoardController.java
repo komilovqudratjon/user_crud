@@ -16,20 +16,12 @@ public class BoardController {
 
   @PostMapping
   public HttpEntity<?> addBoard(@RequestBody ReqBoard reqBoard) {
-    ApiResponseModel response = boardService.addBoard(reqBoard);
-    return ResponseEntity.ok(response);
-  }
-
-  @PutMapping("/edit")
-  public HttpEntity<?> edit(@RequestBody ReqBoard reqBoard) {
-    ApiResponseModel response = boardService.editBoard(reqBoard);
-    return ResponseEntity.ok(response);
+    return boardService.addBoard(reqBoard);
   }
 
   @DeleteMapping("/{id}")
   public HttpEntity<?> deleteBoard(@PathVariable Long id) {
-    ApiResponseModel response = boardService.deleteBoard(id);
-    return ResponseEntity.ok(response);
+    return boardService.deleteBoard(id);
   }
 
   @GetMapping("/all/{projectId}")
