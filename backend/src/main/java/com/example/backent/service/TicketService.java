@@ -268,15 +268,6 @@ public class TicketService {
     return response;
   }
 
-  public Board getOneBoard(Long projectId, BoardCondition condition) {
-    Optional<Board> board = boardRepository.findByProjectIdAndCondition(projectId, condition);
-    if (board.isPresent()) {
-      return board.get();
-    } else {
-      return null;
-    }
-  }
-
   public ApiResponseModel deleteTicket(Long id) {
     ApiResponseModel response = new ApiResponseModel();
     try {

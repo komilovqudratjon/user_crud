@@ -17,22 +17,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-  Optional<User> getByPhoneNumber(String phoneNumber);
-
-  Optional<User> getByEmail(String email);
-
-  Optional<User> getByPassportNumber(String passportNumber);
-
-  List<User>
-      findAllByLastnameContainingOrMiddlenameContainingOrFirstnameContainingOrPhoneNumberContainingOrPassportNumberContainingOrEmailContainingOrAddressContaining(
-          Pageable pageable,
-          String lastname,
-          String middlename,
-          String firstname,
-          String phoneNumber,
-          String passportNumber,
-          String email,
-          String address);
+  Optional<User> getByEmailAndActive(String email, boolean active);
 
   Page<User> findAllByDeleted(boolean deleted, Pageable pageable);
 

@@ -53,7 +53,6 @@ public class BoardService {
     board.setIndex(reqBoard.getIndex());
     board.setProject(project);
     board.setCondition(reqBoard.getCondition());
-
     boardRepository.save(board);
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ApiResponseModel(HttpStatus.OK.value(), info, board));
