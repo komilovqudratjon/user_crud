@@ -1,10 +1,8 @@
 package com.example.backent.service;
 
 import com.example.backent.entity.*;
-import com.example.backent.entity.enums.BoardCondition;
 import com.example.backent.payload.*;
 import com.example.backent.repository.*;
-import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,114 +37,67 @@ public class ProjectService {
 
   @Autowired BoardRepository boardRepository;
 
-  public ApiResponseModel addOrEditProject(ReqProject reqProject) {
-    ApiResponseModel apiResponseModel = new ApiResponseModel();
-    Project project = new Project();
-    try {
-      if (reqProject.getId() != null) {
-        Optional<Project> optionalProject = projectRepository.findById(reqProject.getId());
-        if (optionalProject.isPresent()) {
-          project = optionalProject.get();
-        } else {
-          apiResponseModel.setCode(205);
-          apiResponseModel.setMessage("bunaqa id lik project mavjud emas");
-          return apiResponseModel;
-        }
-      }
-      Optional<Company> optionalCompany = companyRepository.findById(reqProject.getCompanyId());
-      if (optionalCompany.isPresent()) {
-        project.setCompany(optionalCompany.get());
-        if (reqProject.getAgreements() != null) {
-          List<Agreement> allById = agreementRepository.findAllById(reqProject.getAgreements());
-          project.setAgreementList(allById);
-        }
-        if (reqProject.getUsers() != null) {
-          List<User> list = new ArrayList<>();
-          for (int i = 0; i < reqProject.getUsers().size(); i++) {
-            Optional<User> user = userRepository.findById(reqProject.getId());
-            if (user.isPresent()) {
-              list.add(user.get());
-            } else {
-              apiResponseModel.setCode(207);
-              apiResponseModel.setMessage(
-                  "user id:" + reqProject.getUsers().get(i) + " did not found ");
-              return apiResponseModel;
-            }
-          }
-          project.setUsers(list);
-        }
-        project.setStartDate(reqProject.getStartDate());
-        project.setEndDate(reqProject.getEndDate());
-        project.setName(reqProject.getName());
-        Project project1 = projectRepository.save(project);
-        boardRepository.save(new Board("name1", project1, 1L, BoardCondition.CREATED));
-        boardRepository.save(new Board("name2", project1, 2L, BoardCondition.ATTACHED));
-        boardRepository.save(new Board("name3", project1, 3L, BoardCondition.PROCESS));
-        boardRepository.save(new Board("name4", project1, 4L, BoardCondition.TEST));
-        boardRepository.save(new Board("name5", project1, 5L, BoardCondition.DONE));
-      } else {
-        apiResponseModel.setCode(205);
-        apiResponseModel.setMessage("bunaqa idlik companiya mavjud emas");
-        return apiResponseModel;
-      }
-      apiResponseModel.setCode(200);
-      apiResponseModel.setMessage("success !");
-    } catch (Exception e) {
-      apiResponseModel.setCode(500);
-      apiResponseModel.setMessage("error");
-    }
-    return apiResponseModel;
-  }
+  public HttpEntity<?> addOrEditProject(ReqProject reqProject) throws ParseException {
 
-  public ApiResponseModel editAgreementAndCompany(ReqProject reqProject) {
-    ApiResponseModel apiResponseModel = new ApiResponseModel();
-    //        List<Agreement> allById = null;
-    try {
-      if (reqProject.getCompanyId() == null) {
-        apiResponseModel.setCode(207);
-        apiResponseModel.setMessage("enter company id for edit");
-        return apiResponseModel;
+    String info = "save";
+
+    User pm = null;
+    Company company = null;
+    Project project = new Project();
+
+    if (reqProject.getId() != null) {
+      Optional<Project> projectOptional = projectRepository.findById(reqProject.getId());
+      if (projectOptional.isPresent()) {
+        project = projectOptional.get();
+        info = "edit";
       }
-      Optional<Project> optionalProject = projectRepository.findById(reqProject.getCompanyId());
-      if (optionalProject.isPresent()) {
-        if (reqProject.getAgreements() != null) {
-          try {
-            for (int i = 0; i < reqProject.getAgreements().size(); i++) {
-              Optional<Agreement> agreement =
-                  agreementRepository.findById(reqProject.getAgreements().get(i));
-              if (agreement.isPresent()) {
-                optionalProject.get().getAgreementList().add(agreement.get());
-              } else {
-                apiResponseModel.setCode(207);
-                apiResponseModel.setMessage(
-                    "AGREEMENT ID : " + reqProject.getAgreements().get(i) + " not found");
-                return apiResponseModel;
-              }
-            }
-            //                        optionalProject.get().getAgreementList().addAll(allById);
-          } catch (Exception e) {
-            apiResponseModel.setCode(500);
-            apiResponseModel.setMessage("error");
-            return apiResponseModel;
-          }
-        }
-        if (reqProject.getCompanyId() != null) {
-          Optional<Company> optionalCompany = companyRepository.findById(reqProject.getCompanyId());
-          optionalProject.get().setCompany(optionalCompany.get());
-        }
-        projectRepository.save(optionalProject.get());
-      } else {
-        apiResponseModel.setCode(207);
-        apiResponseModel.setMessage("project id did not found");
-        return apiResponseModel;
-      }
-      apiResponseModel.setCode(200);
-      apiResponseModel.setMessage("success");
-    } catch (Exception e) {
-      apiResponseModel.setCode(500);
-      apiResponseModel.setMessage("error");
     }
-    return apiResponseModel;
+
+    if (reqProject.getResponsible() != null) {
+      Optional<User> pmO = userRepository.findById(reqProject.getResponsible());
+      if (pmO.isPresent()) {
+        pm = pmO.get();
+      } else {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(),
+                    "field",
+                    List.of(new ErrorsField("responsible", "not found responsible"))));
+      }
+    }
+    if (reqProject.getCompanyId() != null) {
+      Optional<Company> company1 = companyRepository.findById(reqProject.getCompanyId());
+      if (company1.isPresent()) {
+        company = company1.get();
+      } else {
+        return ResponseEntity.badRequest()
+            .body(
+                new ApiResponseModel(
+                    HttpStatus.CONFLICT.value(),
+                    "field",
+                    List.of(new ErrorsField("worker", "not found worker"))));
+      }
+    }
+
+    if (reqProject.getUsers() != null && !reqProject.getUsers().isEmpty()) {
+      project.setUsers(userRepository.findAllByIdIn(reqProject.getUsers()));
+    }
+
+    if (reqProject.getAgreements() != null && !reqProject.getAgreements().isEmpty()) {
+      project.setAgreementList(agreementRepository.findAllByIdIn(reqProject.getAgreements()));
+    }
+
+    project.setCompany(company);
+    project.setName(reqProject.getName());
+    project.setProjectType(reqProject.getProjectType());
+    project.setStartDate(new SimpleDateFormat("yyyy-MM-dd").parse(reqProject.getStartDate()));
+    project.setEndDate(new SimpleDateFormat("yyyy-MM-dd").parse(reqProject.getEndDate()));
+    project.setResponsible(pm);
+
+    projectRepository.save(project);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ApiResponseModel(HttpStatus.OK.value(), info, project));
   }
 
   public ApiResponseModel getAllProjects() {
@@ -248,8 +201,8 @@ public class ProjectService {
         Double designHoursDone = ticketRepository.countDoneTicketByWorkType("DESIGN", projectId);
         ResProjectCondition res = new ResProjectCondition();
         res.setId(project.get().getId());
-        res.setStartDate(project.get().getStartDate());
-        res.setEndDate(project.get().getEndDate());
+        //        res.setStartDate(project.get().getStartDate());
+        //        res.setEndDate(project.get().getEndDate());
         if (backHours != null) {
           if (backHoursDone != null) {
             res.setBackend((backHoursDone / backHours) * 100);

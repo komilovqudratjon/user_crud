@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "mail.smtp.starttls.enable",
+      "type": "java.lang.String",
+      "description": "Description for mail.smtp.starttls.enable."
+  }
+] }

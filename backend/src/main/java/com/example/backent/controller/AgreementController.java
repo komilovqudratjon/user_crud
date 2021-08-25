@@ -5,26 +5,25 @@ import com.example.backent.payload.ReqAgreement;
 import com.example.backent.payload.ReqProject;
 import com.example.backent.service.AgreementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @RestController
 @RequestMapping("/api/agreement")
 public class AgreementController {
 
-    @Autowired
-    AgreementService agreementService;
+  @Autowired AgreementService agreementService;
 
-    @PostMapping
-    public HttpEntity<?> addProject(@RequestBody ReqAgreement reqAgreement){
-        ApiResponseModel response = agreementService.addAgreement(reqAgreement);
-        return ResponseEntity.ok(response);
-    }
+  @PostMapping("/{why}")
+  public ApiResponseModel agreement(@PathVariable String why, MultipartHttpServletRequest request) {
+    return agreementService.agreement(why, request);
+  }
 
-    @GetMapping("/all")
-    public HttpEntity<?> getAll(){
-        ApiResponseModel response = agreementService.getAllAgreement();
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/getByProject/{id}")
+  public ApiResponseModel getByProject(@PathVariable Long id) {
+    return agreementService.getByProject(id);
+  }
 }

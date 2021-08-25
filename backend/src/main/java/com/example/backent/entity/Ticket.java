@@ -16,6 +16,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class Ticket extends AbsEntity {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   @Enumerated(EnumType.STRING)
   private WorkType workType; // **
@@ -45,6 +48,37 @@ public class Ticket extends AbsEntity {
 
   @Enumerated(EnumType.STRING)
   private TicketCondition ticketCondition; // **
+
+  public Ticket(
+      WorkType workType,
+      String text,
+      User worker,
+      User pm,
+      User tester,
+      Long hoursWorker,
+      Long hoursTester,
+      Board board,
+      ProgramingLanguage programingLanguage,
+      CompleteQuestion completeQuestion,
+      boolean deleted,
+      ProjectType projectType,
+      TicketCondition ticketCondition,
+      Tag tag) {
+    this.workType = workType;
+    this.text = text;
+    this.worker = worker;
+    this.pm = pm;
+    this.tester = tester;
+    this.hoursWorker = hoursWorker;
+    this.hoursTester = hoursTester;
+    this.board = board;
+    this.programingLanguage = programingLanguage;
+    this.completeQuestion = completeQuestion;
+    this.deleted = deleted;
+    this.projectType = projectType;
+    this.ticketCondition = ticketCondition;
+    this.tag = tag;
+  }
 
   @ManyToOne private Tag tag; //
 }

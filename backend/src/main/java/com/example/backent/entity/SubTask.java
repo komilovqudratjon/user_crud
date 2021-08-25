@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -15,8 +14,16 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @Entity
 public class SubTask extends AbsEntity {
-    @ManyToOne
-    private Task task;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String description;
+  @ManyToOne private Task task;
+
+  public SubTask(Task task, String description) {
+    this.task = task;
+    this.description = description;
+  }
+
+  private String description;
 }

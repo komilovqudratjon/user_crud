@@ -1,15 +1,19 @@
 package com.example.backent.controller;
 
 import com.example.backent.payload.ApiResponseModel;
+import com.example.backent.payload.ErrorsField;
 import com.example.backent.payload.ReqProject;
 import com.example.backent.service.ProjectService;
 import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 @RestController
@@ -19,20 +23,26 @@ public class ProjectController {
   @Autowired ProjectService projectService;
 
   @PostMapping
-  public HttpEntity<?> addProject(@RequestBody ReqProject reqProject) {
-    ApiResponseModel response = projectService.addOrEditProject(reqProject);
-    return ResponseEntity.ok(response);
+  public HttpEntity<?> addProject(@RequestBody ReqProject reqProject, BindingResult error)
+      throws ParseException {
+    if (error.hasErrors()) {
+      return ResponseEntity.status(HttpStatus.CONFLICT)
+          .body(
+              new ApiResponseModel(
+                  HttpStatus.CONFLICT.value(),
+                  "field",
+                  error.getFieldErrors().stream()
+                      .map(
+                          fieldError ->
+                              new ErrorsField(
+                                  fieldError.getField(), fieldError.getDefaultMessage()))));
+    }
+    return projectService.addOrEditProject(reqProject);
   }
 
   @PostMapping("/add/user")
   public HttpEntity<?> addUser(@RequestParam Long userId, @RequestParam Long projectId) {
     ApiResponseModel response = projectService.addUserToProject(userId, projectId);
-    return ResponseEntity.ok(response);
-  }
-
-  @PutMapping("/edit")
-  public HttpEntity<?> editProject(@RequestBody ReqProject reqProject) {
-    ApiResponseModel response = projectService.editAgreementAndCompany(reqProject);
     return ResponseEntity.ok(response);
   }
 
@@ -72,7 +82,7 @@ public class ProjectController {
   }
 
   @GetMapping("/generateTz/{id}")
-  public HttpEntity<?> generateTz(@PathVariable Long id) throws DocumentException, IOException {
+  public HttpEntity<?> generateTz(@PathVariable Long id) throws IOException {
     return projectService.generateTz(id);
   }
 }

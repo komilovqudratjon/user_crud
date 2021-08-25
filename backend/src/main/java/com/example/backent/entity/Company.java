@@ -13,6 +13,34 @@ import java.util.List;
 @Entity
 @ToString
 public class Company extends AbsEntity {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  public Company(
+      String name,
+      String responsiblePerson,
+      Long balance,
+      Long oked,
+      Long mfo,
+      Long stir,
+      String phoneNumber,
+      String email,
+      String address,
+      List<Agreement> agreement,
+      boolean deleted) {
+    this.name = name;
+    this.responsiblePerson = responsiblePerson;
+    this.balance = balance;
+    this.oked = oked;
+    this.mfo = mfo;
+    this.stir = stir;
+    this.phoneNumber = phoneNumber;
+    this.email = email;
+    this.address = address;
+    this.agreement = agreement;
+    this.deleted = deleted;
+  }
 
   private String name; // REQUIRED
   private String responsiblePerson;

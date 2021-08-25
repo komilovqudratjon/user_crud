@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -15,6 +14,14 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @Entity
 public class FieldsForUsers extends AbsEntity {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  public FieldsForUsers(String name) {
+    this.name = name;
+  }
+
   @Column(unique = true)
   private String name;
 }

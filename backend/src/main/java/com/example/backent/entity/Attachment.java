@@ -15,6 +15,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class Attachment extends AbsEntity {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
   private String name; //
   private String telegramURL;
   private String path;

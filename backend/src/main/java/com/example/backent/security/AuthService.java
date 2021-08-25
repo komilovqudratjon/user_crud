@@ -2,7 +2,6 @@ package com.example.backent.security;
 
 import com.example.backent.entity.Attachment;
 import com.example.backent.entity.User;
-import com.example.backent.entity.UserExperience;
 import com.example.backent.entity.enums.AttachmentType;
 import com.example.backent.exception.ResourceException;
 import com.example.backent.payload.*;

@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -18,6 +15,9 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @Entity
 public class Board extends AbsEntity {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   private String name;
 
@@ -29,6 +29,15 @@ public class Board extends AbsEntity {
 
   @Enumerated(EnumType.STRING)
   private BoardCondition condition;
+
+  public Board(
+      String name, Project project, boolean deleted, Long index, BoardCondition condition) {
+    this.name = name;
+    this.project = project;
+    this.deleted = deleted;
+    this.index = index;
+    this.condition = condition;
+  }
 
   public Board(String name, Project project, Long index, BoardCondition condition) {
     this.name = name;

@@ -145,9 +145,11 @@ public class DataLoader implements CommandLineRunner {
                             false)),
                     null,
                     List.of(user),
-                    "fgnhjty",
-                    "rtgbht",
-                    false));
+                    new Date(1999 - 1900, Calendar.MARCH, 3),
+                    new Date(1999 - 1900, Calendar.MARCH, 3),
+                    false,
+                    ProjectSTATUS.support,
+                    user));
 
         Board board =
             boardRepository.save(

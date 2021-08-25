@@ -22,6 +22,10 @@ import java.util.List;
 @AllArgsConstructor
 public class User extends AbsEntity implements UserDetails {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
   @Column(nullable = false)
   private String firstname; // REQUIRED
 

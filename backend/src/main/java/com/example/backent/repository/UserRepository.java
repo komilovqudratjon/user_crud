@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> getByEmailAndActive(String email, boolean active);
 
   Page<User> findAllByDeleted(boolean deleted, Pageable pageable);
+
+  List<User> findAllByIdIn(Collection<Long> id);
 
   Page<User>
       findAllByDeletedAndFirstnameContainingOrLastnameContainingOrMiddlenameContainingOrAddressContainingOrPassportNumberContainingOrEmailContaining(
