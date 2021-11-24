@@ -198,7 +198,7 @@ public class UserService {
   public Object document(Optional<Integer> page, Optional<Integer> size, Optional<String> sortBy) {
     return userRepository.findAllByDeleted(
         false,
-        PageRequest.of(page.orElse(0), size.orElse(5), Sort.Direction.ASC, sortBy.orElse("id")));
+          PageRequest.of(page.orElse(0), size.orElse(5), Sort.Direction.ASC, sortBy.orElse("id")));
   }
 
   public HttpEntity<?> getUserById(Long id) {
