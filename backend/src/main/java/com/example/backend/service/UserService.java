@@ -52,9 +52,8 @@ public class UserService {
             } else {
 
                 String s = search.get();
-                id =
-                        userRepository
-                                .findAllByFirstnameContainingOrLastnameContainingOrMiddleNameContainingOrAddressOfBirthContainingOrPassportNumberContaining(
+                id =userRepository
+                                .findAllByFirstnameIgnoreCaseContainingOrLastnameIgnoreCaseContainingOrMiddleNameIgnoreCaseContainingOrAddressOfBirthIgnoreCaseContainingOrPinflIgnoreCaseContaining(
                                         s,
                                         s,
                                         s,
@@ -134,7 +133,7 @@ public class UserService {
                 user.getCitizenship(),
                 user.getPassportGivenTime(),
                 user.getPassportWhoGave(),
-                user.getPassportNumber(),
+                user.getPinfl(),
                 user.getPhoneNumber(),
                 user.getPhoto() == null
                         ? null
@@ -147,6 +146,7 @@ public class UserService {
                 user.getPropensityToAssassinate(),
                 user.getWeaknessesAndStrengths(),
                 user.getSocialResponsibility(),
+                user.getPositionToConform(),
                 user.getAnotherPhotos() == null || user.getAnotherPhotos().size() == 0
                         ? null
                         : user.getAnotherPhotos().stream().map(attachment ->

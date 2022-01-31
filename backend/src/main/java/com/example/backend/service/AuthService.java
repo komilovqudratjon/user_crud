@@ -62,7 +62,7 @@ public class AuthService {
                                         "field",
                                         List.of(new ErrorsField("phoneNumber", "this phoneNumber is busy"))));
             }
-            if (userRepository.existsByPassportNumber(reqSignUp.getPassportNumber())) {
+            if (userRepository.existsByPinfl(reqSignUp.getPinfl())) {
                 return ResponseEntity.badRequest()
                         .body(
                                 new ApiResponseModel(
@@ -82,9 +82,9 @@ public class AuthService {
                             reqSignUp.getNation(),
                             reqSignUp.getAddressOfBirth(),
                             reqSignUp.getCitizenship(),
-                            new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getPassportGivenTime()),
+                            reqSignUp.getPassportGivenTime() == null ? null : new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getPassportGivenTime()),
                             reqSignUp.getPassportWhoGave(),
-                            reqSignUp.getPassportNumber(),
+                            reqSignUp.getPinfl(),
                             reqSignUp.getPhoneNumber(),
                             reqSignUp.getPhotoId() == null
                                     ? null
@@ -103,8 +103,8 @@ public class AuthService {
                                             "field",
                                             List.of(new ErrorsField("phoneNumber", "this phoneNumber is busy"))));
                 }
-                if (userRepository.existsByPassportNumberAndIdNot(
-                        reqSignUp.getPassportNumber(), reqSignUp.getId())) {
+                if (userRepository.existsByPinflAndIdNot(
+                        reqSignUp.getPinfl(), reqSignUp.getId())) {
                     return ResponseEntity.badRequest()
                             .body(
                                     new ApiResponseModel(
@@ -127,7 +127,7 @@ public class AuthService {
                 user.setCitizenship(reqSignUp.getCitizenship());
                 user.setPassportGivenTime(new SimpleDateFormat("yyyy-MM-dd").parse(reqSignUp.getPassportGivenTime()));
                 user.setPassportWhoGave(reqSignUp.getPassportWhoGave());
-                user.setPassportNumber(reqSignUp.getPassportNumber());
+                user.setPinfl(reqSignUp.getPinfl());
                 user.setPhoneNumber(reqSignUp.getPhoneNumber());
                 userRepository.save(user);
                 user.setPhoto(
@@ -158,7 +158,7 @@ public class AuthService {
             Iterator<String> iterator = request.getFileNames();
             MultipartFile multipartFile;
             List<ResUploadFile> resUploadFiles = new ArrayList<>();
-            if (iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 multipartFile = request.getFile(iterator.next());
                 Attachment attachment = new Attachment();
                 assert multipartFile != null;
@@ -210,9 +210,8 @@ public class AuthService {
                                         .path(attachment.getId().toString())
                                         .toUriString(),
                                 save1.getSize()));
-                return new ApiResponseModel(HttpStatus.OK.value(), "saved", resUploadFiles);
             }
-            return new ApiResponseModel(HttpStatus.OK.value(), "not saved", null);
+            return new ApiResponseModel(HttpStatus.OK.value(), "saved", resUploadFiles);
 
         } catch (Exception e) {
             return new ApiResponseModel(HttpStatus.CONFLICT.value(), e.getMessage(), null);
@@ -255,6 +254,7 @@ public class AuthService {
             user.setPropensityToAssassinate(reqSignUp.getPropensityToAssassinate());
             user.setWeaknessesAndStrengths(reqSignUp.getWeaknessesAndStrengths());
             user.setSocialResponsibility(reqSignUp.getSocialResponsibility());
+            user.setPositionToConform(reqSignUp.getPositionToConform());
             List<Attachment> attachments = new ArrayList<>();
             for (Long anotherPhoto : reqSignUp.getAnotherPhotos()) {
                 attachments.add(attachmentRepository.findById(anotherPhoto).orElse(null));

@@ -54,7 +54,7 @@ public class User extends AbsEntity {
     private String passportWhoGave;
 
     @Column
-    private String passportNumber;
+    private String pinfl;
 
     @Column(nullable = false)
     private String phoneNumber; // REQUIRED
@@ -77,6 +77,9 @@ public class User extends AbsEntity {
     @Column(columnDefinition = "TEXT")
     private String socialResponsibility;
 
+    @Column(columnDefinition = "TEXT")
+    private String positionToConform;
+
     @OneToMany
     private List<Attachment> anotherPhotos;
 
@@ -91,7 +94,7 @@ public class User extends AbsEntity {
                 String citizenship,
                 Date passportGivenTime,
                 String passportWhoGave,
-                String passportNumber,
+                String pinfl,
                 String phoneNumber,
                 Attachment photo) {
         this.firstname = firstname;
@@ -104,7 +107,7 @@ public class User extends AbsEntity {
         this.citizenship = citizenship;
         this.passportGivenTime = passportGivenTime;
         this.passportWhoGave = passportWhoGave;
-        this.passportNumber = passportNumber;
+        this.pinfl = pinfl;
         this.phoneNumber = phoneNumber;
         this.photo = photo;
     }

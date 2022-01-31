@@ -40,26 +40,23 @@ public class ReqUser {
 
     private String passportWhoGave;
 
-    private String passportNumber;
+    private String pinfl;
 
     private String phoneNumber; // REQUIRED
 
     private String photo;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String currentStatus;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String susceptibilityToDisease;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String propensityToAssassinate;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String weaknessesAndStrengths;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String socialResponsibility;
+
+    private String positionToConform;
 
     private List<String> anotherPhotos;
 }

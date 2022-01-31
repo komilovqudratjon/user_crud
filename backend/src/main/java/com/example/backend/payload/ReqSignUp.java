@@ -53,10 +53,7 @@ public class ReqSignUp {
 
     private String passportWhoGave;
 
-    @NotNull
-    @NotBlank()
-    @Pattern(regexp = "[A-Z]{2}[0-9]{7}", message = "passport number is invalid")
-    private String passportNumber;
+    private String pinfl;
 
 
     @NotNull

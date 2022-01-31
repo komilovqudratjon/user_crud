@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByIdIn(Collection<Long> id);
 
     Page<User>
-    findAllByFirstnameContainingOrLastnameContainingOrMiddleNameContainingOrAddressOfBirthContainingOrPassportNumberContaining(
+    findAllByFirstnameIgnoreCaseContainingOrLastnameIgnoreCaseContainingOrMiddleNameIgnoreCaseContainingOrAddressOfBirthIgnoreCaseContainingOrPinflIgnoreCaseContaining(
             String firstname,
             String lastname,
             String middlename,
@@ -30,9 +30,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             Pageable pageable);
 
 
-    boolean existsByPassportNumber(String passportNumber);
+    boolean existsByPinfl(String passportNumber);
 
-    boolean existsByPassportNumberAndIdNot(String passportNumber, Long id);
+    boolean existsByPinflAndIdNot(String passportNumber, Long id);
 
     boolean existsByPhoneNumber(String phoneNumber);
 

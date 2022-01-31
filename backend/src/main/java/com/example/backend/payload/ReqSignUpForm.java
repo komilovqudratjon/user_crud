@@ -27,6 +27,8 @@ public class ReqSignUpForm {
 
     private String socialResponsibility;
 
+    private String positionToConform;
+
     private List<Long> anotherPhotos;
 
 }
