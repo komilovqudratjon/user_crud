@@ -23,28 +23,19 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
-@EnableWebMvc
-@Import(BeanValidatorPluginsConfiguration.class)
 public class SpringFoxConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.backent"))
+                .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
-        //    return new ApiInfo( "Manager",
-        //            "manage api documenation",
-        //            "1.0",
-        //            "https://www.google.com/",
-        //            new Contact( "Qudratjon","https://www.google.com/","komilovqudrtajon@gmail.com" ),
-        //            "License of API",
-        //            "API license URL",
-        //            Collections.emptyList( ) );
+
         return new ApiInfoBuilder()
                 .title("User CRUD")
                 .description("manage api documenation")
