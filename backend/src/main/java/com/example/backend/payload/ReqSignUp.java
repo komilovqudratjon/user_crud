@@ -20,14 +20,14 @@ import javax.validation.constraints.Pattern;
 public class ReqSignUp {
     private Long id;
 
-    @NotNull
-    @NotBlank()
-    @Pattern(regexp = "[A-z]*", message = "firstname is invalid")
+//    @NotNull
+//    @NotBlank()
+//    @Pattern(regexp = "[A-z]*", message = "firstname is invalid")
     private String firstname;
 
-    @Pattern(regexp = "[A-z]*", message = "lastname is invalid")
-    @NotNull
-    @NotBlank()
+//    @Pattern(regexp = "[A-z]*", message = "lastname is invalid")
+//    @NotNull
+//    @NotBlank()
     private String lastname;
 
     private String middleName;
