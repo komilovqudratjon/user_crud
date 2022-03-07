@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="manager@localhost" uuid="953b6133-5b2d-4122-b9e5-5e0259228a8c">
+    <data-source source="LOCAL" name="local" uuid="f4122e6f-e296-4d8d-8025-76319951866b">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/manager</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/psycho_analysis_person_photo</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="manager@localhost [2]" uuid="0978f9da-7c4b-410f-aed9-5c40edcc8567">
+    <data-source source="LOCAL" name="server" uuid="6dccb5a9-d255-4b12-bf00-1ebf03b466ba">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/manager</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/psycho_analysis_person_photo</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

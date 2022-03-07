@@ -255,11 +255,13 @@ public class AuthService {
             user.setWeaknessesAndStrengths(reqSignUp.getWeaknessesAndStrengths());
             user.setSocialResponsibility(reqSignUp.getSocialResponsibility());
             user.setPositionToConform(reqSignUp.getPositionToConform());
-            List<Attachment> attachments = new ArrayList<>();
-            for (Long anotherPhoto : reqSignUp.getAnotherPhotos()) {
-                attachments.add(attachmentRepository.findById(anotherPhoto).orElse(null));
+            if(reqSignUp.getAnotherPhotos()!=null) {
+                List<Attachment> attachments = new ArrayList<>();
+                for (Long anotherPhoto : reqSignUp.getAnotherPhotos()) {
+                    attachments.add(attachmentRepository.findById(anotherPhoto).orElse(null));
+                }
+                user.setAnotherPhotos(attachments);
             }
-            user.setAnotherPhotos(attachments);
             userRepository.save(user);
 
 

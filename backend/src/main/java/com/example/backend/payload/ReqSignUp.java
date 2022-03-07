@@ -56,11 +56,11 @@ public class ReqSignUp {
     private String pinfl;
 
 
-    @NotNull
-    @NotBlank()
-    @Pattern(
-            regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\\\s\\\\./0-9]*$",
-            message = "telephone number is invalid")
+//    @NotNull
+//    @NotBlank()
+//    @Pattern(
+//            regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\\\s\\\\./0-9]*$",
+//            message = "telephone number is invalid")
     private String phoneNumber;
 
     private Long photoId;

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,28 +40,30 @@ public class UserService {
 
     public HttpEntity<?> getPageable(
             Optional<Integer> page,
-            Optional<Integer> size,
+            @Valid Optional<String> sortType, Optional<Integer> size,
             Optional<String> sortBy,
             Optional<String> search) {
+
+        Sort.Direction sort = sortType.orElse("DESC").equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
         try {
             UserPageable userPageable = new UserPageable();
             Page<User> id;
 
             if (search.isEmpty()) {
                 id = userRepository.findAll(PageRequest.of(
-                        page.orElse(0), size.orElse(5), Sort.Direction.ASC, sortBy.orElse("id")));
+                        page.orElse(0), size.orElse(5), sort, sortBy.orElse("id")));
             } else {
 
                 String s = search.get();
-                id =userRepository
-                                .findAllByFirstnameIgnoreCaseContainingOrLastnameIgnoreCaseContainingOrMiddleNameIgnoreCaseContainingOrAddressOfBirthIgnoreCaseContainingOrPinflIgnoreCaseContaining(
-                                        s,
-                                        s,
-                                        s,
-                                        s,
-                                        s,
-                                        PageRequest.of(
-                                                page.orElse(0), size.orElse(5), Sort.Direction.ASC, sortBy.orElse("id")));
+                id = userRepository
+                        .findAllByFirstnameIgnoreCaseContainingOrLastnameIgnoreCaseContainingOrMiddleNameIgnoreCaseContainingOrAddressOfBirthIgnoreCaseContainingOrPinflIgnoreCaseContaining(
+                                s,
+                                s,
+                                s,
+                                s,
+                                s,
+                                PageRequest.of(
+                                        page.orElse(0), size.orElse(5), sort, sortBy.orElse("id")));
 
             }
             userPageable.setPageable(id.getPageable());

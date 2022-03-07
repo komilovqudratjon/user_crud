@@ -35,10 +35,11 @@ public class UserController {
             @Valid @RequestParam(value = "page", defaultValue = "0") @Min(0) Optional<Integer> page,
             @Valid @RequestParam(value = "size", defaultValue = "5") @Min(0) Optional<Integer> size,
             @Valid @RequestParam(value = "sortBy", defaultValue = "id") Optional<String> sortBy,
+            @Valid @RequestParam(value = "sortType", defaultValue = "DESC") Optional<String> sortType,
             @Valid @RequestParam(value = "search", defaultValue = "") Optional<String> search) {
 
+        return userService.getPageable(page,sortType, size, sortBy, search);
 
-        return userService.getPageable(page, size, sortBy, search);
     }
 
 

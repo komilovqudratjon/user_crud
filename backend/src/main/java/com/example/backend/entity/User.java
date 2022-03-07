@@ -80,8 +80,10 @@ public class User extends AbsEntity {
     @Column(columnDefinition = "TEXT")
     private String positionToConform;
 
-    @OneToMany
-    private List<Attachment> anotherPhotos;
+    @ManyToOne
+    private Attachment anotherPhotos;
+
+//    private Boolean aBoolean;
 
 
     public User(String firstname,
